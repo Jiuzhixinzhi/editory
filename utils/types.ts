@@ -7,4 +7,9 @@ export type FishingData = {
     distractor: string[]
 }
 
+export type FishingConfig = {
+    start?: number;
+    markerSet?: string[];
+}
+
 export default Data
