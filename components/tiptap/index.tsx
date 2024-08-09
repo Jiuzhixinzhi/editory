@@ -35,8 +35,8 @@ const Tiptap = ({ blank, ...props }: UseEditorOptions & { blank?: () => void }) 
           isIconOnly
         ></Button>
         <Button
-          onPress={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          variant={editor.isActive('heading', { level: 2 }) ? 'shadow' : 'light'}
+          onPress={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          variant={editor.isActive('heading', { level: 3 }) ? 'shadow' : 'light'}
           startContent={<LuHeading2></LuHeading2>}
           isIconOnly
         ></Button>
