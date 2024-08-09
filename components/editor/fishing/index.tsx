@@ -13,18 +13,18 @@ export default function FishingEditor({
 }) {
     return <div className='flex flex-col gap-2'>
         <List
-            items={data.distractor}
+            items={data.distractors}
             placeholder='Add distractor(s) ...'
             add={(item) => {
                 setData({
                     ...data,
-                    distractor: [...data.distractor, item]
+                    distractors: [...data.distractors, item]
                 })
             }}
             remove={(item) => {
                 setData({
                     ...data,
-                    distractor: data.distractor.filter(distractor => distractor !== item)
+                    distractors: data.distractors.filter(distractor => distractor !== item)
                 })
             }}
         />
@@ -36,7 +36,7 @@ export default function FishingEditor({
                     id: data.id,
                     text: editor.getHTML(),
                     type: data.type,
-                    distractor: data.distractor
+                    distractors: data.distractors
                 })
             }}
         />

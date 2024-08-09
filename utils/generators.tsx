@@ -1,5 +1,5 @@
 import type Data from './types';
-import type { FishingConfig } from './types';
+import type { FishingConfig, FishingData } from './types';
 import { ALPHABET_SET, NAME_MAP } from './config';
 import type { JSX } from 'react';
 import fastShuffle from 'fast-shuffle';
@@ -41,7 +41,7 @@ export function generateKey(data: Data[]) {
     })
 }
 
-function generateFishing(data: Data, config?: FishingConfig): [JSX.Element, JSX.Element] {
+function generateFishing(data: FishingData, config?: FishingConfig): [JSX.Element, JSX.Element] {
     const start = config?.start ?? 1;
     const markerSet = config?.markerSet ?? ALPHABET_SET;
 
@@ -63,7 +63,7 @@ function generateFishing(data: Data, config?: FishingConfig): [JSX.Element, JSX.
             }
         }
     });
-    data.distractor.forEach(distractor => {
+    data.distractors.forEach(distractor => {
         parse(`<code>${distractor}</code>`, {
             replace(node) {
                 if (node.type !== ElementType.Tag) {

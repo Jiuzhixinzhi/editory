@@ -1,4 +1,4 @@
-## 名字没想好
+## Editory
 
 > ```
 > npm install
@@ -10,6 +10,7 @@
 - `/components`
   - `/editor` — 编辑器
     - [x] `/fishing` — 小猫钓鱼题
+    - [ ] `/cloze` — 完形填空
   - `/paper` — 试卷展示
   - `/key` — 答案展示
 - `/utils`
@@ -25,8 +26,19 @@ export type FishingData = {
     id: string
     text: string
     type: 'fishing'
-    distractor: string[]
+    distractors: string[]
 }
 ```
 
-注：挖空词在 `text` 中以 `<code></code>`包裹（别问为什么是 code【捂脸】）。
+注：挖空词在 `text` 中以 `<code></code>`包裹，下同（别问为什么是 code【捂脸】）。
+
+#### 完形填空
+
+```ts
+export type ClozeData = {
+    id: string
+    text: string
+    type: 'cloze'
+    distractors: Record<string, string[]>
+}
+```
