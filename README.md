@@ -9,7 +9,7 @@
 
 - `/components`
   - `/editor` — 编辑器
-    - `/fishing` — 小猫钓鱼题型（哈哈）
+    - [x] `/fishing` — 小猫钓鱼题
   - `/paper` — 试卷展示
   - `/key` — 答案展示
 - `/utils`
