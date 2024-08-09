@@ -1,6 +1,6 @@
 import type Data from './types';
 import type { FishingConfig } from './types';
-import { ALPHABET_SET } from './config';
+import { ALPHABET_SET, NAME_MAP } from './config';
 import type { JSX } from 'react';
 import fastShuffle from 'fast-shuffle';
 import seedrandom from 'seedrandom';
@@ -99,8 +99,9 @@ function generateFishing(data: Data, config?: FishingConfig): [JSX.Element, JSX.
 
     return [(
         <>
-            <article>
-                <section className="paper-options border p-4 flex flex-wrap gap-x-8">
+            <article className='flex flex-col gap-y-4 my-4'>
+                <h1 className='text-2xl font-bold'>{NAME_MAP[data.type]}</h1>
+                <section className="paper-options border border-default-900 p-4 flex flex-wrap gap-x-8">
                     {optionJSX}
                 </section>
                 <section>

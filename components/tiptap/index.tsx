@@ -10,15 +10,18 @@ import { LuHeading1, LuHeading2 } from 'react-icons/lu'
 import { MdOutlineQuiz } from 'react-icons/md'
 import TextStyle from '@tiptap/extension-text-style'
 
+const className = 'focus:outline-none prose prose-code:underline prose-code:text-primary/40 prose-blockquote:my-3 prose-h1:my-3 prose-h2:my-2.5 prose-p:my-2 prose-ul:my-1 prose-li:my-0 prose-img:my-4 dark:prose-invert'
+
 const Tiptap = ({ blank, ...props }: UseEditorOptions & { blank?: () => void }) => {
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      TextStyle,
+    const editor = useEditor({
+      extensions: [
+        StarterKit,
+        TextStyle,
     ],
     editorProps: {
       attributes: {
-        class: `focus:outline-none prose prose-code:underline prose-code:text-primary/40 prose-blockquote:my-3 prose-h1:my-3 prose-h2:my-2.5 prose-p:my-2 prose-ul:my-1 prose-li:my-0 prose-img:my-4 dark:prose-invert`,
+        class: className,
+
       },
     },
     editable: true,
@@ -81,7 +84,7 @@ const Tiptap = ({ blank, ...props }: UseEditorOptions & { blank?: () => void }) 
       </ButtonGroup>
     </BubbleMenu>
     <EditorContent editor={editor} />
-  </div> : <div className='mt-[60px]' />
+  </div> : <div className={className} dangerouslySetInnerHTML={{ __html: props.content as string }} />
 }
 
 

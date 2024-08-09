@@ -1,5 +1,7 @@
 type Data = FishingData
 
+export type DataType = 'fishing'
+
 export type FishingData = {
     id: string
     text: string
