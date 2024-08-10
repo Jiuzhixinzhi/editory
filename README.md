@@ -11,6 +11,7 @@
   - `/editor` — 编辑器
     - [x] `/fishing` — 小猫钓鱼题
     - [x] `/cloze` — 完形填空
+    - [ ] `/grammar` — 语法填空
   - `/paper` — 试卷展示
   - `/key` — 答案展示
 - `/utils`
@@ -42,3 +43,18 @@ export type ClozeData = {
     distractors: Record<string, string[]> // { '被挖空词': ['选项1'. '选项2', '选项3'] }
 }
 ```
+
+#### 语法填空
+
+```ts
+export type GrammarData = {
+    id: string
+    text: string
+    type: 'grammar'
+    hints: Record<string, string | undefined>
+}
+```
+
+### 已知问题
+
+- [ ] Cookie 空间限制（暂无计划修理，日后以云端同步代替）

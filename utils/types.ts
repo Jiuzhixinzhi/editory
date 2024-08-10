@@ -1,6 +1,6 @@
-import type { JSX } from 'react';
+import type { JSX } from 'react'
 
-type Data = FishingData | ClozeData
+type Data = FishingData | ClozeData | GrammarData
 
 export type DataType = Data['type']
 
@@ -18,19 +18,26 @@ export type ClozeData = {
     distractors: Record<string, string[] | undefined>
 }
 
+export type GrammarData = {
+    id: string
+    text: string
+    type: 'grammar'
+    hints: Record<string, string | undefined>
+}
+
 export type FishingConfig = {
-    start?: number;
-    markerSet?: string[];
+    start?: number
+    markerSet?: string[]
 }
 
 export type ClozeConfig = {
-    start?: number;
+    start?: number
 }
 
 export type GenerateResult = {
-    paper: JSX.Element;
-    key: JSX.Element;
-    countQuestions: number;
+    paper: JSX.Element
+    key: JSX.Element
+    countQuestions: number
 }
 
 export default Data

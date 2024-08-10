@@ -15,7 +15,7 @@ import { MdOutlineQuiz } from 'react-icons/md'
 import { IoOptionsOutline } from 'react-icons/io5'
 
 export default function Home({ data }: { data: Data[] | null }) {
-  const [items, setItems] = useState<Data[]>(data ?? [genDefaultValue('cloze')])
+  const [items, setItems] = useState<Data[]>(data ?? [genDefaultValue('grammar')])
   const itemsString = JSON.stringify(items)
 
   const [saveToCookies] = useDebounce((data: string) => {
@@ -54,8 +54,12 @@ export default function Home({ data }: { data: Data[] | null }) {
           </div>
 
           <div className='flex flex-col gap-2'>
-            <p className='text-sm text-default-800/50 text-balance'>Select to blank a word.</p>
-            <p className='text-sm text-default-800/50 text-balance'>Auto-saved every sec.</p>
+            <p className='text-sm text-default-800/50 text-balance'>
+              <span className='font-bold'>Select</span> to blank a word.
+            </p>
+            <p className='text-sm text-default-800/50 text-balance'>
+              <span className='font-bold'>Auto-saved</span> every sec.
+            </p>
           </div>
         </div>
         <section className='flex flex-col basis-5/12'>

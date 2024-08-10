@@ -11,7 +11,7 @@ export default function FishingEditor({
     data: FishingData
     setData: (data: FishingData) => void
 }) {
-    return <div className='flex flex-col gap-2'>
+    return <div className='flex flex-col gap-2 before:content-["Fishing"] before:text-primary-300 before:font-bold before:-mb-2 my-5'>
         <List
             items={data.distractors}
             placeholder='Add distractor(s) ...'
