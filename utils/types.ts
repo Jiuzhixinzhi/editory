@@ -25,6 +25,10 @@ export type GrammarData = {
     hints: Record<string, string | undefined>
 }
 
+export type GrammarConfig = {
+    start?: number
+}
+
 export type FishingConfig = {
     start?: number
     markerSet?: string[]

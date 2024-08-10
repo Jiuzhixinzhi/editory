@@ -1,5 +1,5 @@
 import type Data from './types'
-import type { FishingConfig, FishingData, ClozeData, ClozeConfig, GenerateResult } from './types'
+import type { FishingConfig, FishingData, ClozeData, ClozeConfig, GrammarData, GrammarConfig, GenerateResult } from './types'
 import { ALPHABET_SET, NAME_MAP } from './config'
 import type { JSX } from 'react'
 import fastShuffle from 'fast-shuffle'
@@ -24,6 +24,11 @@ export function generatePaper(data: Data[]) {
                 result = generateCloze(data, { start })
                 start += result.countQuestions
                 return result.paper
+            case 'grammar':
+                // 由正文 + 选项组成
+                result = generateGrammar(data, { start })
+                start += result.countQuestions
+                return result.paper
             default:
                 return <></>
         }
@@ -42,6 +47,10 @@ export function generateKey(data: Data[]) {
                 return result.key
             case 'cloze':
                 result = generateCloze(data, { start })
+                start += result.countQuestions
+                return result.key
+            case 'grammar':
+                result = generateGrammar(data, { start })
                 start += result.countQuestions
                 return result.key
             default:
@@ -180,6 +189,8 @@ function generateCloze(data: ClozeData, config?: ClozeConfig): GenerateResult {
         )
     })
 
+    const seedKey = seedrandom.alea(text + JSON.stringify(data.distractors)).int32()
+
     return {
         paper: <>
             <article className='flex flex-col my-4'>
@@ -201,3 +212,51 @@ function generateCloze(data: ClozeData, config?: ClozeConfig): GenerateResult {
     }
 }
 
+function generateGrammar(data: GrammarData, config?: GrammarConfig): GenerateResult {
+    const start = config?.start ?? 1
+
+    // walk
+    let blankCount = 0
+    const keyContents = new Array<string>()
+    const text = parse(data.text, {
+        replace(node) {
+            if (node.type === ElementType.Tag && node.tagName === 'code') {
+                const SPACES = '\u00A0\u00A0\u00A0'
+                const children = domToReact(node.children as (Text | Element)[])
+                const content = children.toString()
+                const hint = data.hints[content]
+                keyContents.push(content)
+                blankCount++
+                const count = start + blankCount - 1
+                if (hint === undefined) {
+                    return <span><u>{SPACES}{count}{SPACES}</u></span>
+                } else {
+                    return <span><u>{SPACES}{count}{SPACES}</u> <span className='paper-hint'>({hint})</span></span>
+                }
+            }
+        }
+    })
+    const keyJSX = keyContents.map((content, index) => {
+        const number = start + index
+        return (
+            <span key={number}>{number}. {content}</span>
+        )
+    })
+
+    return {
+        paper: <>
+            <article className='flex flex-col my-4'>
+                <h1 className='text-2xl font-bold'>{NAME_MAP[data.type]}</h1>
+                <section className="paper-text">
+                    {text}
+                </section>
+            </article>
+        </>,
+        key: <>
+            <section className="key flex flex-wrap gap-x-8">
+                {keyJSX}
+            </section>
+        </>,
+        countQuestions: blankCount,
+    }
+}
