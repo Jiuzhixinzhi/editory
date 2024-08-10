@@ -11,7 +11,7 @@
   - `/editor` — 编辑器
     - [x] `/fishing` — 小猫钓鱼题
     - [x] `/cloze` — 完形填空
-    - [ ] `/grammar` — 语法填空
+    - [x] `/grammar` — 语法填空
   - `/paper` — 试卷展示
   - `/key` — 答案展示
 - `/utils`

@@ -3,6 +3,7 @@
 import Tiptap from '../../tiptap'
 import List from '../../list'
 import { FishingData } from '@/utils/types'
+import { without } from 'es-toolkit'
 
 export default function FishingEditor({
     data,
@@ -24,7 +25,7 @@ export default function FishingEditor({
             remove={(item) => {
                 setData({
                     ...data,
-                    distractors: data.distractors.filter(distractor => distractor !== item)
+                    distractors: without(data.distractors, item)
                 })
             }}
         />
@@ -33,10 +34,8 @@ export default function FishingEditor({
             content={data.text}
             onUpdate={({ editor }) => {
                 setData({
-                    id: data.id,
-                    text: editor.getHTML(),
-                    type: data.type,
-                    distractors: data.distractors
+                    ...data,
+                    text: editor.getHTML()
                 })
             }}
         />

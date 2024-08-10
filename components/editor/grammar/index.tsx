@@ -4,6 +4,8 @@ import Tiptap from '../../tiptap'
 import { GrammarData } from '@/utils/types'
 import { useState } from 'react'
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react'
+import { omit } from 'es-toolkit'
+import { toMerged } from '@/utils/temp'
 
 export default function GrammarEditor({
     data,
@@ -43,13 +45,11 @@ export default function GrammarEditor({
                                 Close
                             </Button>
                             <Button color='primary' variant='flat' onPress={() => {
-                                setData({
-                                    ...data,
+                                setData(toMerged(data, {
                                     hints: {
-                                        ...data.hints,
                                         [blankedWord]: hint
                                     }
-                                })
+                                }))
                                 onClose()
                             }}>
                                 Save
@@ -68,18 +68,15 @@ export default function GrammarEditor({
                 onOpen()
             }}
             unblank={(word) => {
-                const { [word]: _, ...rest } = data.hints
                 setData({
                     ...data,
-                    hints: rest
+                    hints: omit(data.hints, [word]),
                 })
             }}
             onUpdate={({ editor }) => {
                 setData({
-                    id: data.id,
+                    ...data,
                     text: editor.getHTML(),
-                    type: data.type,
-                    hints: data.hints
                 })
             }}
         />

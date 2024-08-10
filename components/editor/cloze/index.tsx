@@ -4,6 +4,9 @@ import Tiptap from '../../tiptap'
 import { ClozeData } from '@/utils/types'
 import { useState } from 'react'
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react'
+import { toFilled } from 'es-toolkit/array'
+import { toMerged } from '@/utils/temp'
+import { omit } from 'es-toolkit'
 
 export default function ClozeEditor({
     data,
@@ -35,7 +38,7 @@ export default function ClozeEditor({
                                         color='primary'
                                         label={`Distractor ${index + 1}`}
                                         onValueChange={(value) => {
-                                            setDistractors(distractors.map((_, i) => i === index ? value : distractors[i]))
+                                            setDistractors(toFilled(distractors, value, index, index + 1))
                                         }}
                                         variant='underlined'
                                     />
@@ -47,13 +50,11 @@ export default function ClozeEditor({
                                 Close
                             </Button>
                             <Button color='primary' variant='flat' onPress={() => {
-                                setData({
-                                    ...data,
+                                setData(toMerged(data, {
                                     distractors: {
-                                        ...data.distractors,
                                         [blankedWord]: distractors
                                     }
-                                })
+                                }))
                                 onClose()
                             }}>
                                 Save
@@ -72,18 +73,15 @@ export default function ClozeEditor({
                 onOpen()
             }}
             unblank={(word) => {
-                const { [word]: _, ...rest } = data.distractors
                 setData({
                     ...data,
-                    distractors: rest
+                    distractors: omit(data.distractors, [word]),
                 })
             }}
             onUpdate={({ editor }) => {
                 setData({
-                    id: data.id,
-                    text: editor.getHTML(),
-                    type: data.type,
-                    distractors: data.distractors
+                    ...data,
+                    text: editor.getHTML()
                 })
             }}
         />
