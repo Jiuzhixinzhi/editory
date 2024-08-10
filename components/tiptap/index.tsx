@@ -11,9 +11,12 @@ import { MdOutlineQuiz } from 'react-icons/md'
 import TextStyle from '@tiptap/extension-text-style'
 import { IoOptionsOutline } from 'react-icons/io5'
 
-const className = 'focus:outline-none prose prose-code:underline prose-code:text-primary/40 prose-blockquote:my-3 prose-h1:my-3 prose-h2:my-2.5 prose-p:my-2 prose-ul:my-1 prose-li:my-0 prose-img:my-4 dark:prose-invert'
+const className = 'focus:outline-none prose prose-code:underline prose-code:text-primary/40 prose-blockquote:my-3 prose-h1:my-3 prose-h2:my-2.5 prose-h3:my-2 prose-p:my-2 prose-ul:my-1 prose-li:my-0 prose-img:my-4 dark:prose-invert'
 
-const Tiptap = ({ blank, ...props }: UseEditorOptions & { blank?: (selection: string) => void }) => {
+const Tiptap = ({ unblank, blank, ...props }: UseEditorOptions & {
+  blank?: (selection: string) => void,
+  unblank?: (selection: string) => void
+}) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -26,8 +29,18 @@ const Tiptap = ({ blank, ...props }: UseEditorOptions & { blank?: (selection: st
       },
     },
     editable: true,
+    immediatelyRender: false,
     ...props
   })
+
+  const getSelection = () => {
+    if (editor) {
+      const { view, state } = editor
+      const { from, to } = view.state.selection
+      return state.doc.textBetween(from, to, ' ')
+    }
+    return ''
+  }
 
   return editor ? <div className='w-full'>
     <BubbleMenu editor={editor}>
@@ -77,10 +90,10 @@ const Tiptap = ({ blank, ...props }: UseEditorOptions & { blank?: (selection: st
         <Button
           onPress={() => {
             if (!editor.isActive('code') && blank) {
-              const { view, state } = editor
-              const { from, to } = view.state.selection
-              const text = state.doc.textBetween(from, to, ' ')
-              blank(text)
+              blank(getSelection())
+            }
+            else if (editor.isActive('code') && unblank) {
+              unblank(getSelection())
             }
             editor.chain().focus().toggleCode().run()
           }}
@@ -88,12 +101,9 @@ const Tiptap = ({ blank, ...props }: UseEditorOptions & { blank?: (selection: st
           startContent={<MdOutlineQuiz></MdOutlineQuiz>}
           isIconOnly
         ></Button>
-        {blank && <Button
+        {blank && editor.isActive('code') && <Button
           onPress={() => {
-            const { view, state } = editor
-            const { from, to } = view.state.selection
-            const text = state.doc.textBetween(from, to, ' ')
-            blank(text)
+            blank(getSelection())
           }}
           variant={editor.isActive('code') ? 'shadow' : 'light'}
           startContent={<IoOptionsOutline></IoOptionsOutline>}

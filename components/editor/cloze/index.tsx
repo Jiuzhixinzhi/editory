@@ -1,7 +1,6 @@
 'use client'
 
 import Tiptap from '../../tiptap'
-import List from '../../list'
 import { ClozeData } from '@/utils/types'
 import { useState } from 'react'
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react'
@@ -70,6 +69,13 @@ export default function ClozeEditor({
                 setBlankedWord(word)
                 setDistractors(data.distractors[word] ?? ['', '', ''])
                 onOpen()
+            }}
+            unblank={(word) => {
+                const { [word]: _, ...rest } = data.distractors
+                setData({
+                    ...data,
+                    distractors: rest
+                })
             }}
             onUpdate={({ editor }) => {
                 setData({

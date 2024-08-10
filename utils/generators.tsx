@@ -1,56 +1,49 @@
-import type Data from './types';
-import type { FishingConfig, FishingData, , ClozeData, ClozeConfig, GenerateResult } from './types';
-import { ALPHABET_SET, NAME_MAP } from './config';
-import type { JSX } from 'react';
-import { renderToString } from 'react-dom/server';
-import fastShuffle from 'fast-shuffle';
-import seedrandom from 'seedrandom';
-import parse, { domToReact } from 'html-react-parser';
-import { ElementType } from 'domelementtype';
-import { Element, Text } from 'domhandler';
+import type Data from './types'
+import type { FishingConfig, FishingData, ClozeData, ClozeConfig, GenerateResult } from './types'
+import { ALPHABET_SET, NAME_MAP } from './config'
+import type { JSX } from 'react'
+import fastShuffle from 'fast-shuffle'
+import seedrandom from 'seedrandom'
+import parse, { domToReact } from 'html-react-parser'
+import { ElementType } from 'domelementtype'
+import { Element, Text } from 'domhandler'
 
 export function generatePaper(data: Data[]) {
-    /*
-     * TODO: Implement paper generation logic
-     * - Iterate through the data array
-     * - Generate HTML or JSX structure for each data item
-     * - Handle different question types (e.g., 'fishing')
-     */
-
-    let start = 1;
-    var result: GenerateResult | null = null;
+    let start = 1
+    var result: GenerateResult | null = null
 
     return data.map((data) => {
         switch (data.type) {
             case 'fishing':
                 // 由含选项的方框 + 正文组成
-                result = generateFishing(data, {start});
+                result = generateFishing(data, { start })
                 start += result.countQuestions
-                return result.paper;
+                return result.paper
             case 'cloze':
-                result = generateCloze(data, {start});
+                // 由正文 + 选项组成
+                result = generateCloze(data, { start })
                 start += result.countQuestions
-                return result.paper;
+                return result.paper
             default:
-                return <></>;
+                return <></>
         }
     })
 }
 
 export function generateKey(data: Data[]) {
-    let start = 1;
-    var result: GenerateResult | null = null;
+    let start = 1
+    var result: GenerateResult | null = null
     return data.map((data) => {
         switch (data.type) {
             case 'fishing':
                 // 由含选项的方框 + 正文组成
-                result = generateFishing(data, {start});
+                result = generateFishing(data, { start })
                 start += result.countQuestions
-                return result.key;
+                return result.key
             case 'cloze':
-                result = generateCloze(data, {start});
+                result = generateCloze(data, { start })
                 start += result.countQuestions
-                return result.key;
+                return result.key
             default:
                 return <></>
         }
@@ -58,60 +51,60 @@ export function generateKey(data: Data[]) {
 }
 
 function generateFishing(data: FishingData, config?: FishingConfig): GenerateResult {
-    const start = config?.start ?? 1;
-    const markerSet = config?.markerSet ?? ALPHABET_SET;
+    const start = config?.start ?? 1
+    const markerSet = config?.markerSet ?? ALPHABET_SET
 
     // walk to gather options
-    let blankCount = 0;
-    const optionElements = new Array<Element>();
+    let blankCount = 0
+    const optionElements = new Array<Element>()
     let textChildren = parse(data.text, {
         replace(node) {
             if (node.type === ElementType.Tag && node.tagName === 'code') {
-                const SPACES = '\u00A0\u00A0\u00A0\u00A0';
+                const SPACES = '\u00A0\u00A0\u00A0\u00A0'
                 // const children = domToReact(node.children as (Text | Element)[]);
-                blankCount++;
-                optionElements.push(node);
+                blankCount++
+                optionElements.push(node)
                 return <>
                     <u>{SPACES}{start + blankCount - 1}{SPACES}</u>
                 </>
             } else {
-                return node;
+                return node
             }
         }
-    });
+    })
     data.distractors.forEach(distractor => {
         parse(`<code>${distractor}</code>`, {
             replace(node) {
                 if (node.type !== ElementType.Tag) {
-                    return;
+                    return
                 }
                 if (node.tagName === 'code') {
-                    optionElements.push(node);
+                    optionElements.push(node)
                 }
             }
-        });
-    });
+        })
+    })
 
     // To make sure the options are shuffled determinately if optionElements is determined.
-    const seed = seedrandom.alea(optionElements.join('')).int32();
-    const optionElementsShuffled = fastShuffle(seed, optionElements);
+    const seed = seedrandom.alea(optionElements.join('')).int32()
+    const optionElementsShuffled = fastShuffle(seed, optionElements)
     const optionJSX = optionElementsShuffled.map((optionElement, index) => {
-        const key = seed.toString() + "&" + index.toString();
+        const key = seed.toString() + "&" + index.toString()
         return (
             <span key={key}>
                 <span className="paper-option-marker pr-2">{markerSet[index]}.</span>
                 <span className='paper-option-content'>{domToReact(optionElement.children as (Text | Element)[])}</span>
             </span>
         )
-    });
+    })
     const keyJSX = optionElements.map((optionElement, index) => {
-        const correctIndex = optionElementsShuffled.indexOf(optionElement);
-        const marker = markerSet[correctIndex];
-        const key = seed.toString() + "&" + index.toString();
+        const correctIndex = optionElementsShuffled.indexOf(optionElement)
+        const marker = markerSet[correctIndex]
+        const key = seed.toString() + "&" + index.toString()
         return (
             <span key={key}>{start + index}. {marker}</span>
-        );
-    });
+        )
+    })
 
     return {
         paper: (
@@ -135,66 +128,66 @@ function generateFishing(data: FishingData, config?: FishingConfig): GenerateRes
             </>
         ),
         countQuestions: blankCount
-    };
+    }
 }
 
 function generateCloze(data: ClozeData, config?: ClozeConfig): GenerateResult {
-    const start = config?.start ?? 1;
+    const start = config?.start ?? 1
 
     // walk
-    let blankCount = 0;
-    const optionElements = new Array<JSX.Element>();
+    let blankCount = 0
+    const optionElements = new Array<JSX.Element>()
     const text = parse(data.text, {
         replace(node) {
             if (node.type === ElementType.Tag && node.tagName === 'code') {
-                const SPACES = '\u00A0\u00A0\u00A0';
-                const children = domToReact(node.children as (Text | Element)[]);
-                const content = renderToString(children);
-                const options = [content, ...data.distractors[content]]
-                const seed = seedrandom.alea(options.join('')).int32();
+                const SPACES = '\u00A0\u00A0\u00A0'
+                const children = domToReact(node.children as (Text | Element)[])
+                const content = children.toString()
+                const options = [content, ...(data.distractors[content] ?? [])]
+                const seed = seedrandom.alea(options.join('')).int32()
                 const optionsJSX = fastShuffle(seed, options).map((option, index) => {
                     return <td key={content + "#" + option}>
                         <span className="paper-option-marker pr-2">{ALPHABET_SET[index]}.</span>
                         <span className='paper-option-content'>{option}</span>
                     </td>
-                });
-                blankCount++;
+                })
+                blankCount++
                 optionElements.push(
                     <tr key={content}>
                         <td>{start + blankCount - 1}.</td>
                         {optionsJSX}
                     </tr>
-                );
+                )
                 return <u className='paper-option-content'>{SPACES}{start + blankCount - 1}{SPACES}</u>
             } else {
-                return;
+                return
             }
         }
-    });
+    })
 
     const options = <table>
         <tbody>
             {optionElements}
         </tbody>
-    </table>;
+    </table>
 
     const keyJSX = optionElements.map((optionElement, index) => {
-        const correctIndex = optionElements.indexOf(optionElement);
-        const marker = ALPHABET_SET[correctIndex];
-        const number = start + index;
+        const correctIndex = optionElements.indexOf(optionElement)
+        const marker = ALPHABET_SET[correctIndex]
+        const number = start + index
         return (
             <span key={number}>{number}. {marker}</span>
-        );
-    });
+        )
+    })
 
     return {
         paper: <>
-            <article className='flex flex-col gap-y-4 my-4'>
+            <article className='flex flex-col my-4'>
                 <h1 className='text-2xl font-bold'>{NAME_MAP[data.type]}</h1>
                 <section className="paper-text">
                     {text}
                 </section>
-                <section className="paper-options border border-default-900 p-2">
+                <section className="paper-options">
                     {options}
                 </section>
             </article>
@@ -205,6 +198,6 @@ function generateCloze(data: ClozeData, config?: ClozeConfig): GenerateResult {
             </section>
         </>,
         countQuestions: blankCount,
-    };
+    }
 }
 

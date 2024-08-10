@@ -15,7 +15,7 @@ export type ClozeData = {
     id: string
     text: string
     type: 'cloze'
-    distractors: Record<string, string[]>
+    distractors: Record<string, string[] | undefined>
 }
 
 export type FishingConfig = {

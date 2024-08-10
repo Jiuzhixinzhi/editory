@@ -10,7 +10,7 @@
 - `/components`
   - `/editor` — 编辑器
     - [x] `/fishing` — 小猫钓鱼题
-    - [ ] `/cloze` — 完形填空
+    - [x] `/cloze` — 完形填空
   - `/paper` — 试卷展示
   - `/key` — 答案展示
 - `/utils`
@@ -39,6 +39,6 @@ export type ClozeData = {
     id: string
     text: string
     type: 'cloze'
-    distractors: Record<string, string[]>
+    distractors: Record<string, string[]> // { '被挖空词': ['选项1'. '选项2', '选项3'] }
 }
 ```
