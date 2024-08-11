@@ -24,7 +24,7 @@ export default function SortableItem(props: {
     }
 
     return (
-        <li ref={setNodeRef} style={style} {...attributes} {...listeners} className={`p-2 font-semibold flex justify-between items-center gap-0.5`}>
+        <li ref={setNodeRef} style={style} {...attributes} {...listeners} className={`p-2 font-semibold flex justify-center items-center w-full gap-0.5`}>
             <span>{`${props.index + 1}. ${props.name}`}</span> <Button size='sm' className='rounded-full' color='danger' variant='light' onPress={props.onDelete} isIconOnly><CgClose /></Button>
         </li>
     )

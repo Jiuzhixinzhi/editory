@@ -93,7 +93,7 @@ abstract class Generator<T extends Data> {
         this.onAfterWalk()
         this.paper = (
             <article className='flex flex-col my-4'>
-                <h1 className='text-2xl font-bold'>{NAME_MAP[data.type]}</h1>
+                <h1 className='text-3xl font-bold'>{NAME_MAP[data.type]}</h1>
                 {this.addPaper()}
             </article>
         )
@@ -153,7 +153,7 @@ class FishingGenerator extends Generator<FishingData> {
             </span>
         ))
         return [
-            <section className="paper-options border border-default-900 p-4 flex flex-wrap gap-x-8" key={options.join('')}>{options}</section>,
+            <section className="paper-options border border-default-900 p-4 my-2 flex flex-wrap gap-x-8" key={options.join('')}>{options}</section>,
             this.paper,
         ]
     }
@@ -161,10 +161,11 @@ class FishingGenerator extends Generator<FishingData> {
     protected generateKey(): JSX.Element[] {
         const keyJSX = this.options.map((option, index) => (
             <span key={option}>
-                <span className="paper-option-marker pr-2">{ALPHABET_SET[index]}.</span>
-                <span className='paper-option-content'>{option}</span>
+                <span className="paper-option-marker pr-2">{this.start + index}.</span>
+                <span className='paper-option-content'>{this.data.markerSet[this.options.indexOf(option)]}</span>
             </span>
         ))
+        this.countQuestions = this.options.length
         return keyJSX
     }
 }
@@ -205,7 +206,7 @@ class ClozeGenerator extends Generator<ClozeData> {
                 </td>
             ))
             return (
-                <tr key={content}>
+                <tr key={content} className='leading-snug'>
                     <td>{this.getNumber()}.</td>
                     {optionsJSX}
                 </tr>
