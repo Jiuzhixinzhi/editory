@@ -13,24 +13,31 @@ import { CgExternal } from 'react-icons/cg'
 import { genDefaultValue } from '@/utils/config'
 import { MdOutlineQuiz } from 'react-icons/md'
 import { IoOptionsOutline } from 'react-icons/io5'
+import Main from '../main'
+import { updatePaper } from '../papers/actions'
 
-export default function Home({ data }: { data: Data[] | null }) {
+export default function Editory({ data, id }: { data: Data[] | null, id?: string }) {
   const [items, setItems] = useState<Data[]>(data ?? [genDefaultValue('grammar')])
   const itemsString = JSON.stringify(items)
 
-  const [saveToCookies] = useDebounce((data: string) => {
-    Cookies.set('data', data)
+  const [save] = useDebounce((data: string) => {
+    if (id) {
+      updatePaper({ id, data: JSON.parse(data) })
+    }
+    else {
+      Cookies.set('data', data)
+    }
   }, 1000)
 
   useEffect(() => {
-    saveToCookies(itemsString)
+    save(itemsString)
   }, [itemsString])
 
   return (
-    <main className='px-4 py-4 w-full mx-auto bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#2D2E2F_1px,transparent_1px)] [background-size:20px_20px]'>
+    <Main>
       <div className='flex gap-4'>
         <div className='flex flex-col gap-2 p-4 text-end basis-1/12'>
-          <h2 className='font-bold text-4xl text-primary-300'>Editor</h2>
+          <h2 className='font-bold text-4xl text-primary-300 mt-6'>Editor</h2>
 
           <div className='flex flex-col gap-2 text-sm text-primary-400/70'>
             <div className='flex items-center gap-2'>
@@ -59,6 +66,9 @@ export default function Home({ data }: { data: Data[] | null }) {
             </p>
             <p className='text-sm text-default-800/50 text-balance'>
               <span className='font-bold'>Auto-saved</span> every sec.
+            </p>
+            <p className='text-sm text-default-800/50 text-balance'>
+              <span className='font-bold'>Print key:</span> Ctrl + P.
             </p>
           </div>
         </div>
@@ -90,6 +100,6 @@ export default function Home({ data }: { data: Data[] | null }) {
           </section>
         </div>
       </div>
-    </main>
+    </Main>
   )
 }

@@ -1,0 +1,18 @@
+{
+  "id": "mig_cqs3r0i05tt3u27fp9l0",
+  "parentID": "mig_cqs3qsfm8mlainq92mcg",
+  "checksum": "1:6c03b50e3fa3c2b1b274aa2e589d63deafeb29386590f9868c52b5931c5cf812",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "data",
+          "type": "json",
+          "notNull": true,
+          "defaultValue": "{}"
+        },
+        "table": "papers"
+      }
+    }
+  ]
+}

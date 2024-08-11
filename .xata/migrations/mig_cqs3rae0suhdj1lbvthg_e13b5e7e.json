@@ -1,0 +1,19 @@
+{
+  "id": "mig_cqs3rae0suhdj1lbvthg",
+  "parentID": "mig_cqs3r0i05tt3u27fp9l0",
+  "checksum": "1:e13b5e7e5d751a3484acb36ce71c740ba7a2a5ddccc1a76eeb632913aa054917",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "user",
+          "type": "link",
+          "link": {
+            "table": "nextauth_users"
+          }
+        },
+        "table": "papers"
+      }
+    }
+  ]
+}

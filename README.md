@@ -55,6 +55,9 @@ export type GrammarData = {
 }
 ```
 
-### 已知问题
+### TODO
 
-- [ ] Cookie 空间限制（暂无计划修理，日后以云端同步代替）
+- [ ] 以云端同步代替 cookie
+- [ ] 在试卷生成页面隐藏 header
+- [ ] 修复后替换 `/utils/temp.ts`
+- [ ] NextAuth 大版本升级

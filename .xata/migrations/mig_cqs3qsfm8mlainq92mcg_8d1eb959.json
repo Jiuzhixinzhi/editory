@@ -1,0 +1,18 @@
+{
+  "id": "mig_cqs3qsfm8mlainq92mcg",
+  "parentID": "mig_cqs3qefm8mlainq92mbg",
+  "checksum": "1:8d1eb95907c79f237f8a1e1f48a53280903e38ae4bc73341e3f3f6be78b9286c",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "name",
+          "type": "text",
+          "notNull": true,
+          "defaultValue": "New paper"
+        },
+        "table": "papers"
+      }
+    }
+  ]
+}

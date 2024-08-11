@@ -1,5 +1,5 @@
 {
-  "name": "testimory",
+  "name": "Editory",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth/xata-adapter": "^1.4.2",
     "@dnd-kit/core": "^6.1.0",
     "@dnd-kit/sortable": "^8.0.0",
     "@nextui-org/react": "^2.4.6",
@@ -16,20 +17,25 @@
     "@tiptap/extension-text-style": "^2.5.9",
     "@tiptap/react": "^2.5.9",
     "@tiptap/starter-kit": "^2.5.9",
+    "@xata.io/client": "^0.30.0",
+    "clsx": "^2.1.1",
     "domelementtype": "^2.3.0",
     "domhandler": "^5.0.3",
     "es-toolkit": "^1.15.1",
     "fast-shuffle": "^6.1.0",
-    "framer-motion": "^11.3.23",
+    "framer-motion": "^11.3.24",
     "html-react-parser": "^5.1.12",
     "js-cookie": "^3.0.5",
     "next": "14.2.5",
+    "next-auth": "^5.0.0-beta.20",
     "next-themes": "^0.3.0",
     "react": "^18",
+    "react-div-100vh": "^0.7.0",
     "react-dom": "^18",
     "react-icons": "^5.2.1",
     "react-use-system-color-mode": "^1.0.4",
     "seedrandom": "^3.0.5",
+    "tailwind-merge": "^2.4.0",
     "use-debounce": "^10.0.2"
   },
   "devDependencies": {
