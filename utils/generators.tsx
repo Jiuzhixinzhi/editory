@@ -92,13 +92,13 @@ abstract class Generator<T extends Data> {
         )
         this.onAfterWalk()
         this.paper = (
-            <article className='flex flex-col my-4'>
+            <article key={this.data.id} className='flex flex-col my-4'>
                 <h1 className='text-3xl font-bold'>{NAME_MAP[data.type]}</h1>
                 {this.addPaper()}
             </article>
         )
         this.key = (
-            <section className="flex flex-wrap gap-x-8">{this.generateKey()}</section>
+            <section key={this.data.id} className="flex flex-wrap gap-x-8">{this.generateKey()}</section>
         )
     }
 
@@ -124,6 +124,7 @@ abstract class Generator<T extends Data> {
 
 class FishingGenerator extends Generator<FishingData> {
     private options: string[] = []
+    private correctAnswers: string[] = []
 
     protected onBeforeWalk() {
         this.options = new Array()
@@ -140,6 +141,7 @@ class FishingGenerator extends Generator<FishingData> {
     }
 
     protected onAfterWalk(): void {
+        this.correctAnswers = this.options.slice()
         this.options.push(...this.data.distractors)
         const seed = this.getSeed(this.options.join('&'))
         this.options = fastShuffle(seed, this.options)
@@ -159,13 +161,12 @@ class FishingGenerator extends Generator<FishingData> {
     }
 
     protected generateKey(): JSX.Element[] {
-        const keyJSX = this.options.map((option, index) => (
-            <span key={option}>
+        const keyJSX = this.correctAnswers.map((correctAnswer, index) => (
+            <span key={correctAnswer}>
                 <span className="paper-option-marker pr-2">{this.start + index}.</span>
-                <span className='paper-option-content'>{this.data.markerSet[this.options.indexOf(option)]}</span>
+                <span className='paper-option-content'>{this.data.markerSet[this.options.indexOf(correctAnswer)]}</span>
             </span>
         ))
-        this.countQuestions = this.options.length
         return keyJSX
     }
 }
