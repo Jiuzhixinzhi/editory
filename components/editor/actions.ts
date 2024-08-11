@@ -33,7 +33,7 @@ const getConfig = (type: DataType) => {
     switch (type) {
         case 'cloze':
             return {
-                system: `把prompt出成英语高考完形填空，高考难度。\n在text里输出挖空的文本（挖空处加题号，将挖空词以<code></code>包裹，形如<code>word</code>），在distrators以被挖空词为键、三个干扰项为值。对下文出十五题，每题三个干扰项。例如若其中被挖空词有moral和effectively，应输出{"text":"...<code>moral</code>...<code>effectively</code>...","distractors":{"moral":["scientific","potential","instant"],"effectively":["hardly","likely","skillfully"],"...":["...","...","..."]}}。\n必须对所有十五题各给出三个干扰项。尽可能广泛地考察词汇，选项中尽量使用常用词。挖空词汇必须与上下文强关联，可以合理推断出答案。选项分布必须均匀，贯穿全文。`,
+                system: `把prompt出成英语高考完形填空，高考难度。\n在text里输出挖空的文本（挖空处加题号，将挖空词以<code></code>包裹，形如<code>word</code>），在distrators以被挖空词为键、三个干扰项为值。对下文出十五题，每题三个干扰项。例如若其中被挖空词有moral和effectively，应输出{"text":"...<code>moral</code>...<code>effectively</code>...","distractors":{"moral":["scientific","potential","instant"],"effectively":["hardly","likely","skillfully"],"...":["...","...","..."]}}。\n必须对所有十五题各给出三个干扰项。尽可能广泛地考察词汇，选项中尽量使用常用词。禁止对同一单词重复出题。挖空词汇必须与上下文强关联，可以合理推断出答案。空的分布必须均匀，贯穿全文。`,
                 schema: z.object({
                     text: z.string().describe('挖空的文本'),
                     distractors: z.record(z.string().describe('被挖空的词'), z.array(z.string()).length(3).describe('该题的三个干扰项')).describe('干扰项')
@@ -41,10 +41,19 @@ const getConfig = (type: DataType) => {
             }
         case 'fishing':
             return {
-                system: `把prompt出成英语高考小猫钓鱼题（十一选十），高考难度。\n在text里输出挖空的文本（挖空处加题号，将挖空词以<code></code>包裹，形如<code>word</code>），在distrators输出干扰项数组。对下文出十空，必须对其中一空出一个用于混淆被试者的干扰项，例如{"text":"...<code>word</code>...","distractors":["..."]}}。\n一共出十题，即挖十个空，以及一个干扰项。尽可能广泛地考察词性不同的词汇，选项中尽量使用常用词。挖空词汇必须与上下文强关联，可以合理推断出答案。选项分布必须均匀，贯穿全文。`,
+                system: `把prompt出成英语高考小猫钓鱼题（十一选十），高考难度。\n在text里输出挖空的文本（挖空处加题号，将挖空词以<code></code>包裹，形如<code>word</code>），在distrators输出干扰项数组。对下文出十空，必须对其中一空出一个用于混淆被试者的干扰项，例如{"text":"...<code>word</code>...","distractors":["..."]}}。\n一共出十题，即挖十个空，以及一个干扰项。尽可能广泛地考察词性不同的词汇，选项中尽量使用常用词。禁止对同一单词重复出题。挖空词汇必须与上下文强关联，可以合理推断出答案。空的分布必须均匀，贯穿全文。`,
                 schema: z.object({
                     text: z.string().describe('挖空的文本'),
                     distractors: z.array(z.string()).length(1).describe('一个干扰项')
+                })
+            }
+        // 不太成熟
+        case 'grammar':
+            return {
+                system: `把prompt出成英语高考语法填空，高考难度。\n在text里输出语法题的文本，在hints输出提示，以被挖空实词为键，原形为值。禁止对虚词（介词、连词、代词等）添加hint，只对形容词、动词、副词添加hint。对下文出十题。例如若其中被挖空词有where和is wanted，应输出{"text":"...<code>where</code>...<code>is wanted</code>...","hint":{"is wanted":"want"}}}。\n挖空词汇必须与上下文强关联，可以合理推断出答案。空的分布必须均匀，贯穿全文。`,
+                schema: z.object({
+                    text: z.string().describe('挖空的文本'),
+                    hints: z.record(z.string().describe('被挖空的实词在文中的形式'),z.string().describe('实词原形'))
                 })
             }
         default:
