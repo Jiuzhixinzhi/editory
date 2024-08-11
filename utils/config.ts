@@ -9,7 +9,7 @@ export const ABCD_SET = [
 ]
 
 export const NAME_MAP: Record<DataType, string> = {
-    'fishing': 'Word Choice',
+    'fishing': 'Vocabulary',
     'cloze': 'Cloze',
     'grammar': 'Grammar'
 }

@@ -58,14 +58,14 @@ export default function Sortable({ items, setItems }: {
                     items={items}
                     strategy={verticalListSortingStrategy}
                 >
-                    <div className='border-1 border-default-800/20 pl-4 py-2 pr-1 min-w-60'>
+                    <div className='border-1 border-default-800/20 pl-4 py-2 pr-1 min-w-60 flex flex-col justify-center items-center'>
                         {items.map((item, index) => <SortableItem key={item.id} id={item.id} index={index} name={NAME_MAP[item.type]} onDelete={() => {
                             setItems((items) => items.filter((_, i) => i !== index))
                         }} />)}
                     </div>
                 </SortableContext>
             </DndContext>
-            <div className='text-2xl font-bold text-default-800/30 h-full flex items-center'>
+            <div className='text-2xl font-bold text-default-800/30 h-full'>
                 Drag
                 <br />
                 To reorder

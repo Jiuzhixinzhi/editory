@@ -10,10 +10,12 @@ import { omit } from 'es-toolkit'
 
 export default function ClozeEditor({
     data,
-    setData
+    setData,
+    id
 }: {
     data: ClozeData
     setData: (data: ClozeData) => void
+    id?: string
 }) {
     const [distractors, setDistractors] = useState<string[]>(['', '', ''])
     const [blankedWord, setBlankedWord] = useState<string>('')
@@ -65,7 +67,6 @@ export default function ClozeEditor({
             </ModalContent>
         </Modal>
         <Tiptap
-            key={data.id}
             content={data.text}
             blank={(word) => {
                 setBlankedWord(word)
@@ -78,6 +79,11 @@ export default function ClozeEditor({
                     distractors: omit(data.distractors, [word]),
                 })
             }}
+            ai={id ? {
+                id,
+                setData,
+                data
+            } : undefined}
             onUpdate={({ editor }) => {
                 setData({
                     ...data,

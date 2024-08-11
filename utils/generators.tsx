@@ -153,7 +153,7 @@ class FishingGenerator extends Generator<FishingData> {
             </span>
         ))
         return [
-            <section key={options.join('')}>{options}</section>,
+            <section className="paper-options border border-default-900 p-4 flex flex-wrap gap-x-8" key={options.join('')}>{options}</section>,
             this.paper,
         ]
     }
@@ -243,7 +243,6 @@ class GrammarGenerator extends Generator<GrammarData> {
     protected replacer(node: DOMNode): JSX.Element | undefined {
         if (node.type === ElementType.Tag && node.tagName === 'code') {
             this.countQuestions++
-            console.log(node.children)
             const content = ((node as Element).children[0] as Text).data
             const hint = this.data.hints[content]
             this.keyContents.push(content)

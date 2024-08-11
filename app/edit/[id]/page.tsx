@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 
 export default async function Editor({ params }: { params: { id: string } }) {
     if (!await isLoggedIn()) {
-        redirect('/login')
+        redirect('/')
     }
     const { id } = params
     const paper = await getPaper({ id })

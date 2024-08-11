@@ -9,10 +9,12 @@ import { toMerged } from '@/utils/temp'
 
 export default function GrammarEditor({
     data,
-    setData
+    setData,
+    id
 }: {
     data: GrammarData
     setData: (data: GrammarData) => void
+    id?: string
 }) {
     const [hint, setHint] = useState<string>('')
     const [blankedWord, setBlankedWord] = useState<string>('')

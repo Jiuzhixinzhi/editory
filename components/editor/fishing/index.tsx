@@ -7,10 +7,12 @@ import { without } from 'es-toolkit'
 
 export default function FishingEditor({
     data,
-    setData
+    setData,
+    id
 }: {
     data: FishingData
     setData: (data: FishingData) => void
+    id?: string
 }) {
     return <div className='flex flex-col gap-2 before:content-["Fishing"] before:text-primary-300 before:font-bold before:-mb-2 my-5'>
         <List
@@ -38,6 +40,11 @@ export default function FishingEditor({
                     text: editor.getHTML()
                 })
             }}
+            ai={id ? {
+                id,
+                setData,
+                data
+            } : undefined}
         />
     </div>
 }

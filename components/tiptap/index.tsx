@@ -10,13 +10,32 @@ import { LuHeading1, LuHeading2 } from 'react-icons/lu'
 import { MdOutlineQuiz } from 'react-icons/md'
 import TextStyle from '@tiptap/extension-text-style'
 import { IoOptionsOutline } from 'react-icons/io5'
+import { FaMagic } from 'react-icons/fa'
+import Data from '@/utils/types'
+import { readStreamableValue } from 'ai/rsc'
+import generate from '../editor/actions'
+import { useDebouncedCallback } from 'use-debounce'
 
 const className = 'focus:outline-none prose prose-code:underline prose-code:text-primary/40 prose-blockquote:my-3 prose-h1:my-3 prose-h2:my-2.5 prose-h3:my-2 prose-p:my-2 prose-ul:my-1 prose-li:my-0 prose-img:my-4 dark:prose-invert'
 
-const Tiptap = ({ unblank, blank, ...props }: UseEditorOptions & {
+const Tiptap = ({ unblank, blank, ai, ...props }: UseEditorOptions & {
   blank?: (selection: string) => void,
   unblank?: (selection: string) => void
+  ai?: {
+    id: string,
+    data: Data,
+    setData: (data: any) => void,
+  }
 }) => {
+  const debouncedSetData = useDebouncedCallback((data) => {
+    if (editor) {
+      editor.commands.setContent(data.text, false)
+    }
+    if (ai) {
+      ai.setData(data)
+    }
+  }, 1000)
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -107,6 +126,22 @@ const Tiptap = ({ unblank, blank, ...props }: UseEditorOptions & {
           }}
           variant={editor.isActive('code') ? 'shadow' : 'light'}
           startContent={<IoOptionsOutline></IoOptionsOutline>}
+          isIconOnly
+        ></Button>}
+        {ai && <Button
+          onPress={async () => {
+            const { object } = await generate({ id: ai.id, prompt: getSelection(), type: ai.data.type })
+            for await (const partialObject of readStreamableValue(object)) {
+              if (partialObject) {
+                debouncedSetData({
+                  ...ai.data,
+                  ...partialObject
+                })
+              }
+            }
+          }}
+          variant='light'
+          startContent={<FaMagic></FaMagic>}
           isIconOnly
         ></Button>}
       </ButtonGroup>

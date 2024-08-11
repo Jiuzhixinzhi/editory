@@ -1,5 +1,3 @@
-import type { JSX } from 'react'
-
 type Data = FishingData | ClozeData | GrammarData
 
 export type DataType = Data['type']

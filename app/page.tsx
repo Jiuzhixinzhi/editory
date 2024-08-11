@@ -28,7 +28,7 @@ export default async function HomePage() {
         'use server'
         await signIn('google')
       }}>
-        <Button variant='light' size='lg' color='primary' href='/editor' as={Link}>Try it out</Button>
+        <Button variant='light' size='lg' color='primary' href='/editor' as={Link} className='rounded-full'>Try it out</Button>
         <Button variant='bordered' size='lg' color='primary' type='submit' startContent={<FcGoogle />} className='rounded-full'>Get Started</Button>
       </form>
     </Main>

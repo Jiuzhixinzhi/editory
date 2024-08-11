@@ -6,7 +6,7 @@ import Paper from '@/components/paper'
 import Sortable from '@/components/sortable'
 import Data from '@/utils/types'
 import { useEffect, useState } from 'react'
-import { useDebounce } from 'use-debounce'
+import { useDebouncedCallback } from 'use-debounce'
 import Cookies from 'js-cookie'
 import { Button, Link } from '@nextui-org/react'
 import { CgExternal } from 'react-icons/cg'
@@ -15,12 +15,13 @@ import { MdOutlineQuiz } from 'react-icons/md'
 import { IoOptionsOutline } from 'react-icons/io5'
 import Main from '../main'
 import { updatePaper } from '../papers/actions'
+import { FaMagic } from 'react-icons/fa'
 
 export default function Editory({ data, id }: { data: Data[] | null, id?: string }) {
   const [items, setItems] = useState<Data[]>(data ?? [genDefaultValue('grammar')])
   const itemsString = JSON.stringify(items)
 
-  const [save] = useDebounce((data: string) => {
+  const save = useDebouncedCallback((data: string) => {
     if (id) {
       updatePaper({ id, data: JSON.parse(data) })
     }
@@ -31,7 +32,7 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
 
   useEffect(() => {
     save(itemsString)
-  }, [itemsString])
+  }, [save, itemsString])
 
   return (
     <Main>
@@ -58,22 +59,31 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
                 options
               </div>
             </div>
+            <div className='flex items-center gap-2'>
+              <div>
+                <FaMagic />
+              </div>
+              <hr className='flex-1 border-t-primary-400/70 border-t-1' />
+              <div>
+                AI gen
+              </div>
+            </div>
           </div>
 
           <div className='flex flex-col gap-2'>
             <p className='text-sm text-default-800/50 text-balance'>
-              <span className='font-bold'>Select</span> to blank a word.
+              <span className='font-bold'>Select</span> to blank a word
             </p>
             <p className='text-sm text-default-800/50 text-balance'>
-              <span className='font-bold'>Auto-saved</span> every sec.
+              <span className='font-bold'>Auto-saved</span> every sec
             </p>
             <p className='text-sm text-default-800/50 text-balance'>
-              <span className='font-bold'>Print key:</span> Ctrl + P.
+              <span className='font-bold'>Print hotkey:</span> Ctrl + P
             </p>
           </div>
         </div>
         <section className='flex flex-col basis-5/12'>
-          <Editor items={items} setItems={setItems} />
+          <Editor items={items} setItems={setItems} id={id} />
         </section>
 
         <div className='flex flex-col items-center gap-2 basis-6/12 pt-8'>

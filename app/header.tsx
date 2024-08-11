@@ -1,4 +1,4 @@
-import { auth, signOut } from '@/auth'
+import { auth, signIn, signOut } from '@/auth'
 import { Button } from '@nextui-org/react'
 import Link from 'next/link'
 import { BiLogInCircle, BiLogOutCircle } from 'react-icons/bi'
@@ -16,12 +16,15 @@ export default async function Header() {
                 <div className='flex-1'></div>
                 <form action={async () => {
                     'use server'
-                    await signOut()
+                    if (session)
+                        await signOut()
+                    else
+                        await signIn('google')
                 }}>
                     {
                         session
-                            ? <Button isIconOnly variant='solid' className='rounded-full' color='primary' startContent={<BiLogOutCircle />}></Button>
-                            : <Button isIconOnly variant='solid' className='rounded-full' color='primary' startContent={<BiLogInCircle />}></Button>
+                            ? <Button isIconOnly variant='flat' className='rounded-full' color='primary' startContent={<BiLogOutCircle />}></Button>
+                            : <Button isIconOnly variant='ghost' className='rounded-full' color='primary' startContent={<BiLogInCircle />}></Button>
                     }
                 </form>
             </div>
