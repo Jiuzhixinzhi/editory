@@ -7,7 +7,10 @@ import Header from './header'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Editory'
+  title: {
+    default: 'Editory',
+    template: '%s | Editory'
+  }
 }
 
 export default function RootLayout({

@@ -14,7 +14,6 @@ import { FaMagic } from 'react-icons/fa'
 import Data from '@/utils/types'
 import { readStreamableValue } from 'ai/rsc'
 import generate from '../editor/actions'
-import { useDebouncedCallback } from 'use-debounce'
 
 const className = 'focus:outline-none prose prose-code:underline prose-code:text-primary/40 prose-blockquote:my-3 prose-h1:my-3 prose-h2:my-2.5 prose-h3:my-2 prose-p:my-2 prose-ul:my-1 prose-li:my-0 prose-img:my-4 dark:prose-invert'
 
@@ -27,15 +26,6 @@ const Tiptap = ({ unblank, blank, ai, ...props }: UseEditorOptions & {
     setData: (data: any) => void,
   }
 }) => {
-  const debouncedSetData = useDebouncedCallback((data) => {
-    if (editor) {
-      editor.commands.setContent(data.text, false)
-    }
-    if (ai) {
-      ai.setData(data)
-    }
-  }, 1000)
-
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -132,12 +122,13 @@ const Tiptap = ({ unblank, blank, ai, ...props }: UseEditorOptions & {
           onPress={async () => {
             const { object } = await generate({ id: ai.id, prompt: getSelection(), type: ai.data.type })
             for await (const partialObject of readStreamableValue(object)) {
-              if (partialObject) {
-                debouncedSetData({
-                  ...ai.data,
-                  ...partialObject
-                })
+              if (editor) {
+                editor.commands.setContent(partialObject.text)
               }
+              ai.setData({
+                ...ai.data,
+                ...partialObject
+              })
             }
           }}
           variant='light'

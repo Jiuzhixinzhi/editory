@@ -3,6 +3,13 @@ import { getPaper } from '@/components/papers/actions'
 import { isLoggedIn } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 
+export async function generateMetadata({ params }: { params: { id: string } }) {
+    const paper = await getPaper({ id: params.id })
+    return {
+        title: `Editing ${paper.name} | Editory`
+    }
+}
+
 export default async function Editor({ params }: { params: { id: string } }) {
     if (!await isLoggedIn()) {
         redirect('/')
