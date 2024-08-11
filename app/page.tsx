@@ -3,8 +3,13 @@ import { AuroraBackground } from '@/components/aurora'
 import Main from '@/components/main'
 import Papers from '@/components/papers'
 import { Button } from '@nextui-org/react'
+import { Metadata } from 'next'
 import Link from 'next/link'
 import { FcGoogle } from 'react-icons/fc'
+
+export const metadata: Metadata = {
+  title: 'ESL exam paper editing, reimagined | Editory'
+}
 
 export default async function HomePage() {
   if (await auth()) {

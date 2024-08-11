@@ -133,7 +133,7 @@ class FishingGenerator extends Generator<FishingData> {
     protected replacer(node: DOMNode): JSX.Element | undefined {
         if (node.type === ElementType.Tag && node.tagName === 'code') {
             this.countQuestions++
-            this.options.push((node.children[0] as Text).data)
+            this.options.push((node.children[0] as Text)?.data)
             return (
                 <u>{this.spaces}{this.getNumber()}{this.spaces}</u>
             )
@@ -181,7 +181,7 @@ class ClozeGenerator extends Generator<ClozeData> {
     protected replacer(node: DOMNode): JSX.Element | undefined {
         if (node.type === ElementType.Tag && node.tagName === 'code') {
             this.countQuestions++
-            const content = ((node as Element).children[0] as Text).data
+            const content = ((node as Element).children[0] as Text)?.data
             this.options[content] = [content, ...(this.data.distractors[content] ?? [])]
             return (
                 <u>{this.spaces}{this.getNumber()}{this.spaces}</u>

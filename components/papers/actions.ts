@@ -8,7 +8,7 @@ import { revalidatePath } from 'next/cache'
 const xata = getXataClient()
 
 export async function getPaper({ id }: { id: string }) {
-    const paper = await xata.db.papers.select(['data']).filter({ id }).getFirstOrThrow()
+    const paper = await xata.db.papers.select(['name', 'data']).filter({ id }).getFirstOrThrow()
     return paper
 }
 
