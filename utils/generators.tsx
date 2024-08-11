@@ -248,8 +248,11 @@ class GrammarGenerator extends Generator<GrammarData> {
             const content = ((node as Element).children[0] as Text).data
             const hint = this.data.hints[content]
             this.keyContents.push(content)
-            if (hint === undefined) {
-                return <span><u>{this.spaces}{this.getNumber()}{this.spaces}</u></span>
+            if (hint === undefined || hint === '') {
+                const words = content.split(' ').length
+                const underlines = new Array<JSX.Element[]>(words).fill([<u key={content + "_underline"}>{this.spaces}{this.getNumber()}{this.spaces}</u>, <span key={content + "_space"}>&nbsp;</span>]).flat()
+                underlines.pop()
+                return <span>{underlines}</span>
             } else {
                 return <span><u>{this.spaces}{this.getNumber()}{this.spaces}</u> <span className='paper-hint'>({hint})</span></span>
             }
