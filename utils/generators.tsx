@@ -1,34 +1,37 @@
 import type Data from './types'
-import type { FishingConfig, FishingData, ClozeData, ClozeConfig, GrammarData, GrammarConfig, GenerateResult } from './types'
+import type { FishingData, ClozeData, GrammarData, Config } from './types'
 import { ALPHABET_SET, NAME_MAP } from './config'
+
 import type { JSX } from 'react'
 import fastShuffle from 'fast-shuffle'
 import seedrandom from 'seedrandom'
-import parse, { domToReact } from 'html-react-parser'
+
+import parse, { type DOMNode } from 'html-react-parser'
 import { ElementType } from 'domelementtype'
-import { Element, Text } from 'domhandler'
+import type { Element, Text } from 'domhandler'
+
 
 export function generatePaper(data: Data[]) {
     let start = 1
-    var result: GenerateResult | null = null
+    var generator: Generator<Data> | null = null
 
     return data.map((data) => {
         switch (data.type) {
             case 'fishing':
                 // 由含选项的方框 + 正文组成
-                result = generateFishing(data, { start })
-                start += result.countQuestions
-                return result.paper
+                generator = new FishingGenerator(data, { start })
+                start += generator.countQuestions
+                return generator.paper
             case 'cloze':
                 // 由正文 + 选项组成
-                result = generateCloze(data, { start })
-                start += result.countQuestions
-                return result.paper
+                generator = new ClozeGenerator(data, { start })
+                start += generator.countQuestions
+                return generator.paper
             case 'grammar':
                 // 由正文 + 选项组成
-                result = generateGrammar(data, { start })
-                start += result.countQuestions
-                return result.paper
+                generator = new GrammarGenerator(data, { start })
+                start += generator.countQuestions
+                return generator.paper
             default:
                 return <></>
         }
@@ -37,226 +40,231 @@ export function generatePaper(data: Data[]) {
 
 export function generateKey(data: Data[]) {
     let start = 1
-    var result: GenerateResult | null = null
+    var generator: Generator<Data> | null = null
+
     return data.map((data) => {
         switch (data.type) {
             case 'fishing':
                 // 由含选项的方框 + 正文组成
-                result = generateFishing(data, { start })
-                start += result.countQuestions
-                return result.key
+                generator = new FishingGenerator(data, { start })
+                start += generator.countQuestions
+                return generator.key
             case 'cloze':
-                result = generateCloze(data, { start })
-                start += result.countQuestions
-                return result.key
+                // 由正文 + 选项组成
+                generator = new ClozeGenerator(data, { start })
+                start += generator.countQuestions
+                return generator.key
             case 'grammar':
-                result = generateGrammar(data, { start })
-                start += result.countQuestions
-                return result.key
+                // 由正文 + 选项组成
+                generator = new GrammarGenerator(data, { start })
+                start += generator.countQuestions
+                return generator.key
             default:
                 return <></>
         }
     })
 }
 
-function generateFishing(data: FishingData, config?: FishingConfig): GenerateResult {
-    const start = config?.start ?? 1
-    const markerSet = config?.markerSet ?? ALPHABET_SET
+abstract class Generator<T extends Data> {
+    public paper: JSX.Element
+    public key: JSX.Element
+    public countQuestions: number
 
-    // walk to gather options
-    let blankCount = 0
-    const optionElements = new Array<Element>()
-    let textChildren = parse(data.text, {
-        replace(node) {
-            if (node.type === ElementType.Tag && node.tagName === 'code') {
-                const SPACES = '\u00A0\u00A0\u00A0\u00A0'
-                // const children = domToReact(node.children as (Text | Element)[]);
-                blankCount++
-                optionElements.push(node)
-                return <>
-                    <u>{SPACES}{start + blankCount - 1}{SPACES}</u>
-                </>
-            } else {
-                return node
-            }
-        }
-    })
-    data.distractors.forEach(distractor => {
-        parse(`<code>${distractor}</code>`, {
-            replace(node) {
-                if (node.type !== ElementType.Tag) {
-                    return
-                }
-                if (node.tagName === 'code') {
-                    optionElements.push(node)
-                }
-            }
+    protected spaces: string
+    protected data: T
+    protected start: number
+
+    constructor(data: T, config?: Config) {
+        this.data = data
+        this.start = config?.start ?? 1
+        this.spaces = new Array(config?.countSpaces ?? 3).fill('\u00A0').join('')
+        this.countQuestions = 0
+        this.onBeforeWalk()
+        // to prevent incorrect this context
+        const replacer = this.replacer.bind(this)
+        const paperBasic = parse(data.text, {
+            replace: replacer,
         })
-    })
+        this.paper = (
+            <section>
+                {paperBasic}
+            </section>
+        )
+        this.onAfterWalk()
+        this.paper = (
+            <article className='flex flex-col my-4'>
+                <h1 className='text-2xl font-bold'>{NAME_MAP[data.type]}</h1>
+                {this.addPaper()}
+            </article>
+        )
+        this.key = (
+            <section className="flex flex-wrap gap-x-8">{this.generateKey()}</section>
+        )
+    }
 
-    // To make sure the options are shuffled determinately if optionElements is determined.
-    const seed = seedrandom.alea(optionElements.join('')).int32()
-    const optionElementsShuffled = fastShuffle(seed, optionElements)
-    const optionJSX = optionElementsShuffled.map((optionElement, index) => {
-        const key = seed.toString() + "&" + index.toString()
-        return (
-            <span key={key}>
-                <span className="paper-option-marker pr-2">{markerSet[index]}.</span>
-                <span className='paper-option-content'>{domToReact(optionElement.children as (Text | Element)[])}</span>
+    public getSeed(content: string | number) {
+        return seedrandom.alea(content.toString()).int32()
+    }
+
+    public getNumber(): number {
+        return this.start + this.countQuestions - 1
+    }
+
+    protected abstract onBeforeWalk(): void
+
+    /** Since replacer is in object {replace: this.replacer}, which can cause incorrect this context. */
+    protected abstract replacer(node: DOMNode): JSX.Element | undefined
+
+    protected abstract onAfterWalk(): void
+
+    protected abstract addPaper(): JSX.Element[]
+
+    protected abstract generateKey(): JSX.Element[]
+}
+
+class FishingGenerator extends Generator<FishingData> {
+    private options: string[] = []
+
+    protected onBeforeWalk() {
+        this.options = new Array()
+    }
+
+    protected replacer(node: DOMNode): JSX.Element | undefined {
+        if (node.type === ElementType.Tag && node.tagName === 'code') {
+            this.countQuestions++
+            this.options.push((node.children[0] as Text).data)
+            return (
+                <u>{this.spaces}{this.getNumber()}{this.spaces}</u>
+            )
+        }
+    }
+
+    protected onAfterWalk(): void {
+        this.options.push(...this.data.distractors)
+        const seed = this.getSeed(this.options.join('&'))
+        this.options = fastShuffle(seed, this.options)
+    }
+
+    protected addPaper(): JSX.Element[] {
+        const options = this.options.map((option, index) => (
+            <span key={option}>
+                <span className="paper-option-marker pr-2">{ALPHABET_SET[index]}.</span>
+                <span className='paper-option-content'>{option}</span>
             </span>
-        )
-    })
-    const keyJSX = optionElements.map((optionElement, index) => {
-        const correctIndex = optionElementsShuffled.indexOf(optionElement)
-        const marker = markerSet[correctIndex]
-        const key = seed.toString() + "&" + index.toString()
-        return (
-            <span key={key}>{start + index}. {marker}</span>
-        )
-    })
+        ))
+        return [
+            <section key={options.join('')}>{options}</section>,
+            this.paper,
+        ]
+    }
 
-    return {
-        paper: (
-            <>
-                <article className='flex flex-col gap-y-4 my-4'>
-                    <h1 className='text-2xl font-bold'>{NAME_MAP[data.type]}</h1>
-                    <section className="paper-options border border-default-900 p-4 flex flex-wrap gap-x-8">
-                        {optionJSX}
-                    </section>
-                    <section className="paper-text">
-                        {textChildren}
-                    </section>
-                </article>
-            </>
-        ),
-        key: (
-            <>
-                <section className="key flex flex-wrap gap-x-8">
-                    {keyJSX}
-                </section>
-            </>
-        ),
-        countQuestions: blankCount
+    protected generateKey(): JSX.Element[] {
+        const keyJSX = this.options.map((option, index) => (
+            <span key={option}>
+                <span className="paper-option-marker pr-2">{ALPHABET_SET[index]}.</span>
+                <span className='paper-option-content'>{option}</span>
+            </span>
+        ))
+        return keyJSX
     }
 }
 
-function generateCloze(data: ClozeData, config?: ClozeConfig): GenerateResult {
-    const start = config?.start ?? 1
+class ClozeGenerator extends Generator<ClozeData> {
+    private options: { [key: string]: string[] } = {}
 
-    // walk
-    let blankCount = 0
-    const optionElements = new Array<JSX.Element>()
-    const text = parse(data.text, {
-        replace(node) {
-            if (node.type === ElementType.Tag && node.tagName === 'code') {
-                const SPACES = '\u00A0\u00A0\u00A0'
-                const children = domToReact(node.children as (Text | Element)[])
-                const content = children.toString()
-                const options = [content, ...(data.distractors[content] ?? [])]
-                const seed = seedrandom.alea(options.join('')).int32()
-                const optionsJSX = fastShuffle(seed, options).map((option, index) => {
-                    return <td key={content + "#" + option}>
-                        <span className="paper-option-marker pr-2">{ALPHABET_SET[index]}.</span>
-                        <span className='paper-option-content'>{option}</span>
-                    </td>
-                })
-                blankCount++
-                optionElements.push(
-                    <tr key={content}>
-                        <td>{start + blankCount - 1}.</td>
-                        {optionsJSX}
-                    </tr>
-                )
-                return <u className='paper-option-content'>{SPACES}{start + blankCount - 1}{SPACES}</u>
-            } else {
-                return
-            }
+    protected onBeforeWalk() {
+        this.options = {}
+    }
+
+    protected replacer(node: DOMNode): JSX.Element | undefined {
+        if (node.type === ElementType.Tag && node.tagName === 'code') {
+            this.countQuestions++
+            const content = ((node as Element).children[0] as Text).data
+            this.options[content] = [content, ...(this.data.distractors[content] ?? [])]
+            return (
+                <u>{this.spaces}{this.getNumber()}{this.spaces}</u>
+            )
         }
-    })
+    }
 
-    const options = <table>
-        <tbody>
-            {optionElements}
-        </tbody>
-    </table>
+    protected onAfterWalk(): void {
+        for (const key in this.options) {
+            const seed = this.getSeed(this.options[key].join('&'))
+            this.options[key] = fastShuffle(seed, this.options[key])
+        }
+    }
 
-    const keyJSX = optionElements.map((optionElement, index) => {
-        const correctIndex = optionElements.indexOf(optionElement)
-        const marker = ALPHABET_SET[correctIndex]
-        const number = start + index
-        return (
-            <span key={number}>{number}. {marker}</span>
-        )
-    })
-
-    const seedKey = seedrandom.alea(text + JSON.stringify(data.distractors)).int32()
-
-    return {
-        paper: <>
-            <article className='flex flex-col my-4'>
-                <h1 className='text-2xl font-bold'>{NAME_MAP[data.type]}</h1>
-                <section className="paper-text">
-                    {text}
-                </section>
-                <section className="paper-options">
+    protected addPaper(): JSX.Element[] {
+        this.countQuestions = 0
+        const options = Object.keys(this.options).map((content) => {
+            this.countQuestions++
+            const optionsJSX = this.options[content].map((option, index) => (
+                <td key={content + "#" + option}>
+                    <span className="paper-option-marker pr-2">{ALPHABET_SET[index]}.</span>
+                    <span className='paper-option-content'>{option}</span>
+                </td>
+            ))
+            return (
+                <tr key={content}>
+                    <td>{this.getNumber()}.</td>
+                    {optionsJSX}
+                </tr>
+            )
+        })
+        return [
+            this.paper,
+            <table key="options">
+                <tbody>
                     {options}
-                </section>
-            </article>
-        </>,
-        key: <>
-            <section className="key flex flex-wrap gap-x-8">
-                {keyJSX}
-            </section>
-        </>,
-        countQuestions: blankCount,
+                </tbody>
+            </table>,
+        ]
+    }
+
+    protected generateKey(): JSX.Element[] {
+        const keyJSX = Object.keys(this.options).map((content, index) => {
+            const correctIndex = this.options[content].indexOf(content)
+            const marker = ALPHABET_SET[correctIndex]
+            return (
+                <span key={content}>{this.start + index}. {marker}</span>
+            )
+        })
+        return keyJSX
     }
 }
 
-function generateGrammar(data: GrammarData, config?: GrammarConfig): GenerateResult {
-    const start = config?.start ?? 1
+class GrammarGenerator extends Generator<GrammarData> {
+    private keyContents: string[] = []
 
-    // walk
-    let blankCount = 0
-    const keyContents = new Array<string>()
-    const text = parse(data.text, {
-        replace(node) {
-            if (node.type === ElementType.Tag && node.tagName === 'code') {
-                const SPACES = '\u00A0\u00A0\u00A0'
-                const children = domToReact(node.children as (Text | Element)[])
-                const content = children.toString()
-                const hint = data.hints[content]
-                keyContents.push(content)
-                blankCount++
-                const count = start + blankCount - 1
-                if (hint === undefined) {
-                    return <span><u>{SPACES}{count}{SPACES}</u></span>
-                } else {
-                    return <span><u>{SPACES}{count}{SPACES}</u> <span className='paper-hint'>({hint})</span></span>
-                }
+    protected onBeforeWalk() {
+        this.keyContents = []
+    }
+
+    protected replacer(node: DOMNode): JSX.Element | undefined {
+        if (node.type === ElementType.Tag && node.tagName === 'code') {
+            this.countQuestions++
+            console.log(node.children)
+            const content = ((node as Element).children[0] as Text).data
+            const hint = this.data.hints[content]
+            this.keyContents.push(content)
+            if (hint === undefined) {
+                return <span><u>{this.spaces}{this.getNumber()}{this.spaces}</u></span>
+            } else {
+                return <span><u>{this.spaces}{this.getNumber()}{this.spaces}</u> <span className='paper-hint'>({hint})</span></span>
             }
         }
-    })
-    const keyJSX = keyContents.map((content, index) => {
-        const number = start + index
-        return (
-            <span key={number}>{number}. {content}</span>
-        )
-    })
+    }
 
-    return {
-        paper: <>
-            <article className='flex flex-col my-4'>
-                <h1 className='text-2xl font-bold'>{NAME_MAP[data.type]}</h1>
-                <section className="paper-text">
-                    {text}
-                </section>
-            </article>
-        </>,
-        key: <>
-            <section className="key flex flex-wrap gap-x-8">
-                {keyJSX}
-            </section>
-        </>,
-        countQuestions: blankCount,
+    protected onAfterWalk(): void { }
+
+    protected addPaper(): JSX.Element[] {
+        return [this.paper]
+    }
+
+    protected generateKey(): JSX.Element[] {
+        const keyJSX = this.keyContents.map((content, index) => (
+            <span key={content}>{this.start + index}. {content}</span>
+        ))
+        return keyJSX
     }
 }

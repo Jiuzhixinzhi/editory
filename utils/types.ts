@@ -8,7 +8,8 @@ export type FishingData = {
     id: string
     text: string
     type: 'fishing'
-    distractors: string[]
+    distractors: string[],
+    markerSet: string[]
 }
 
 export type ClozeData = {
@@ -25,23 +26,11 @@ export type GrammarData = {
     hints: Record<string, string | undefined>
 }
 
-export type GrammarConfig = {
-    start?: number
-}
-
-export type FishingConfig = {
-    start?: number
-    markerSet?: string[]
-}
-
-export type ClozeConfig = {
-    start?: number
-}
-
-export type GenerateResult = {
-    paper: JSX.Element
-    key: JSX.Element
-    countQuestions: number
+export type Config = {
+    /** @default 1 */
+    start?: number,
+    /** @default 3 */
+    countSpaces?: number,
 }
 
 export default Data

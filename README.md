@@ -28,6 +28,7 @@ export type FishingData = {
     text: string
     type: 'fishing'
     distractors: string[]
+    markerSet: string[] // 字母记号集，可应对仅ABCD的答题卡
 }
 ```
 
@@ -58,3 +59,4 @@ export type GrammarData = {
 ### 已知问题
 
 - [ ] Cookie 空间限制（暂无计划修理，日后以云端同步代替）
+- [ ] 需限制挖空词**内部**不得带有格式
