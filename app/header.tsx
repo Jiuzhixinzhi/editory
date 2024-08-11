@@ -23,8 +23,8 @@ export default async function Header() {
                 }}>
                     {
                         session
-                            ? <Button isIconOnly variant='flat' className='rounded-full' color='primary' startContent={<BiLogOutCircle />}></Button>
-                            : <Button isIconOnly variant='ghost' className='rounded-full' color='primary' startContent={<BiLogInCircle />}></Button>
+                            ? <Button isIconOnly variant='flat' type='submit' className='rounded-full' color='primary' startContent={<BiLogOutCircle />}></Button>
+                            : <Button isIconOnly variant='ghost' type='submit' className='rounded-full' color='primary' startContent={<BiLogInCircle />}></Button>
                     }
                 </form>
             </div>
