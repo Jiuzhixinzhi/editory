@@ -2,7 +2,7 @@
 
 import { Button, Input } from '@nextui-org/react'
 import { useState } from 'react'
-import { BiCheck, BiEdit, BiTrash } from 'react-icons/bi'
+import { PiCheckCircleDuotone, PiPencilCircleDuotone, PiTrashDuotone, PiExamDuotone } from 'react-icons/pi'
 import { createPaper, deletePaper, updatePaper } from './actions'
 import Link from 'next/link'
 
@@ -14,7 +14,7 @@ export default function Paper({ id, name, createNew }: { id: string; name: strin
         {
             isEditing
                 ? <Input size='sm' value={paperName} placeholder='Create new paper' variant='underlined' color='primary' onValueChange={setPaperName} className='flex-1' />
-                : <Link href={`/edit/${id}`} className='flex-1'>{paperName}</Link>
+                : <Link href={`/edit/${id}`} className='flex-1' ><PiExamDuotone className='inline-block mr-2' />{paperName}</Link>
         }
         <Button isIconOnly isLoading={isLoading} size='sm' variant='light' onPress={async () => {
             setIsEditing(!isEditing)
@@ -29,11 +29,11 @@ export default function Paper({ id, name, createNew }: { id: string; name: strin
                 }
                 setIsLoading(false)
             }
-        }} startContent={isEditing ? <BiCheck /> : <BiEdit />}></Button>
+        }} startContent={isEditing ? <PiCheckCircleDuotone /> : <PiPencilCircleDuotone />}></Button>
         <Button isIconOnly isDisabled={createNew} isLoading={isLoading} size='sm' variant='light' color='danger' onPress={async () => {
             setIsLoading(true)
             await deletePaper({ id })
             setIsLoading(false)
-        }} startContent={<BiTrash />}></Button>
+        }} startContent={<PiTrashDuotone />}></Button>
     </div>
 }

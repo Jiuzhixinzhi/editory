@@ -93,7 +93,7 @@ abstract class Generator<T extends Data> {
         this.onAfterWalk()
         this.paper = (
             <article key={this.data.id} className='flex flex-col my-4'>
-                <h1 className='text-3xl font-bold'>{NAME_MAP[data.type]}</h1>
+                <h2 className='text-2xl font-bold'>{NAME_MAP[data.type]}</h2>
                 {this.addPaper()}
             </article>
         )

@@ -1,15 +1,13 @@
 import { auth, signOut } from '@/auth'
 import { Button, } from '@nextui-org/react'
 import clsx from 'clsx'
-import { Caveat } from 'next/font/google'
 import Link from 'next/link'
-import { BiLogOutCircle } from 'react-icons/bi'
+import { PiSignOutDuotone } from 'react-icons/pi'
 import Image from 'next/image'
 import icon from './icon.png'
 import Login from './login'
 import getSubdomain from '@/utils/routing'
-
-const caveat = Caveat({ subsets: ['latin'] })
+import { themeFont } from '@/utils/fonts'
 
 export default async function Header() {
     if (getSubdomain()) return null
@@ -20,7 +18,7 @@ export default async function Header() {
             <div className='flex items-start'>
                 <Link href='/' className='flex gap-1'>
                     <span><Image src={icon} alt='Editory' width={32} height={32} className='rotate-12' /></span>
-                    <span className={clsx(caveat.className, 'text-3xl')}>ditory</span>
+                    <span className={clsx(themeFont.className, 'text-3xl')}>ditory</span>
                 </Link>
                 <div className='flex-1'></div>
                 <form action={async () => {
@@ -29,7 +27,7 @@ export default async function Header() {
                 }}>
                     {
                         session
-                            ? <Button isIconOnly variant='flat' type='submit' className='rounded-full' color='primary' startContent={<BiLogOutCircle />}></Button>
+                            ? <Button isIconOnly variant='flat' type='submit' className='rounded-full' color='primary' startContent={<PiSignOutDuotone />}></Button>
                             : <Login />
                     }
                 </form>

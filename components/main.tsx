@@ -8,7 +8,7 @@ export default function Main({ isCentered, fullHeight, ...props }: HTMLAttribute
     fullHeight?: boolean
 }) {
     const height = use100vh()
-    const offset = fullHeight ? 0 : 65
+    const offset = fullHeight ? 0 : 64
     return <main
         style={{
             minHeight: height ? height - offset : `calc(100vh - ${offset}px)`,

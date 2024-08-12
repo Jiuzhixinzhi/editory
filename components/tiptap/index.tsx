@@ -3,19 +3,13 @@
 import { Button, ButtonGroup } from '@nextui-org/react'
 import { useEditor, EditorContent, UseEditorOptions, BubbleMenu, getHTMLFromFragment } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { AiOutlineBold, AiOutlineItalic, AiOutlineStrikethrough } from 'react-icons/ai'
-import { CiCircleList } from 'react-icons/ci'
-import { TbBlockquote } from 'react-icons/tb'
-import { LuHeading1, LuHeading2 } from 'react-icons/lu'
-import { MdOutlineQuiz } from 'react-icons/md'
+import { PiTextBDuotone, PiTextItalicDuotone, PiTextStrikethroughDuotone, PiListBulletsDuotone, PiQuotesDuotone, PiTextHOneDuotone, PiTextHTwoDuotone, PiTextHThreeDuotone, PiSealQuestionDuotone, PiOptionDuotone, PiMagicWandDuotone } from 'react-icons/pi'
 import TextStyle from '@tiptap/extension-text-style'
-import { IoOptionsOutline } from 'react-icons/io5'
-import { FaMagic } from 'react-icons/fa'
 import Data from '@/utils/types'
 import { readStreamableValue } from 'ai/rsc'
 import generate from '../editor/actions'
 
-const className = 'focus:outline-none prose prose-code:underline prose-code:text-primary/40 prose-blockquote:my-3 prose-h1:my-3 prose-h2:my-2.5 prose-h3:my-2 prose-p:my-2 prose-ul:my-1 prose-li:my-0 prose-img:my-4 dark:prose-invert'
+const className = 'focus:outline-none prose prose-code:underline prose-code:underline-offset-4 prose-code:text-primary/40 prose-blockquote:my-3 prose-h1:my-3 prose-h2:my-2.5 prose-h3:my-2 prose-p:my-2 prose-ul:my-1 prose-li:my-0 prose-img:my-4 dark:prose-invert'
 
 const Tiptap = ({ unblank, blank, ai, ...props }: UseEditorOptions & {
   blank?: (selection: string) => void,
@@ -55,45 +49,51 @@ const Tiptap = ({ unblank, blank, ai, ...props }: UseEditorOptions & {
     <BubbleMenu editor={editor}>
       <ButtonGroup variant='light' className='bg-background border rounded-full overflow-clip'>
         <Button
+          onPress={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          variant={editor.isActive('heading', { level: 1 }) ? 'shadow' : 'light'}
+          startContent={<PiTextHOneDuotone />}
+          isIconOnly
+        ></Button>
+        <Button
           onPress={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           variant={editor.isActive('heading', { level: 2 }) ? 'shadow' : 'light'}
-          startContent={<LuHeading1></LuHeading1>}
+          startContent={<PiTextHTwoDuotone />}
           isIconOnly
         ></Button>
         <Button
           onPress={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           variant={editor.isActive('heading', { level: 3 }) ? 'shadow' : 'light'}
-          startContent={<LuHeading2></LuHeading2>}
+          startContent={<PiTextHThreeDuotone />}
           isIconOnly
         ></Button>
         <Button
           onPress={() => editor.chain().focus().toggleBold().run()}
           variant={editor.isActive('bold') ? 'shadow' : 'light'}
-          startContent={<AiOutlineBold></AiOutlineBold>}
+          startContent={<PiTextBDuotone />}
           isIconOnly
         ></Button>
         <Button
           onPress={() => editor.chain().focus().toggleItalic().run()}
           variant={editor.isActive('italic') ? 'shadow' : 'light'}
-          startContent={<AiOutlineItalic></AiOutlineItalic>}
+          startContent={<PiTextItalicDuotone />}
           isIconOnly
         ></Button>
         <Button
           onPress={() => editor.chain().focus().toggleStrike().run()}
           variant={editor.isActive('strike') ? 'shadow' : 'light'}
-          startContent={<AiOutlineStrikethrough></AiOutlineStrikethrough>}
+          startContent={<PiTextStrikethroughDuotone />}
           isIconOnly
         ></Button>
         <Button
           onPress={() => editor.chain().focus().toggleBlockquote().run()}
           variant={editor.isActive('blockquote') ? 'shadow' : 'light'}
-          startContent={<TbBlockquote></TbBlockquote>}
+          startContent={<PiQuotesDuotone />}
           isIconOnly
         ></Button>
         <Button
           onPress={() => editor.chain().focus().toggleBulletList().run()}
           variant={editor.isActive('bulletList') ? 'shadow' : 'light'}
-          startContent={<CiCircleList></CiCircleList>}
+          startContent={<PiListBulletsDuotone />}
           isIconOnly
         ></Button>
         <Button
@@ -107,7 +107,7 @@ const Tiptap = ({ unblank, blank, ai, ...props }: UseEditorOptions & {
             editor.chain().focus().toggleCode().run()
           }}
           variant={editor.isActive('code') ? 'shadow' : 'light'}
-          startContent={<MdOutlineQuiz></MdOutlineQuiz>}
+          startContent={<PiSealQuestionDuotone />}
           isIconOnly
         ></Button>
         {blank && editor.isActive('code') && <Button
@@ -115,7 +115,7 @@ const Tiptap = ({ unblank, blank, ai, ...props }: UseEditorOptions & {
             blank(getSelection())
           }}
           variant={editor.isActive('code') ? 'shadow' : 'light'}
-          startContent={<IoOptionsOutline></IoOptionsOutline>}
+          startContent={<PiOptionDuotone />}
           isIconOnly
         ></Button>}
         {ai && <Button
@@ -132,7 +132,7 @@ const Tiptap = ({ unblank, blank, ai, ...props }: UseEditorOptions & {
             }
           }}
           variant='light'
-          startContent={<FaMagic></FaMagic>}
+          startContent={<PiMagicWandDuotone />}
           isIconOnly
         ></Button>}
       </ButtonGroup>

@@ -19,7 +19,7 @@ import {
 import Data, { DataType } from '@/utils/types'
 import { genDefaultValue, NAME_MAP } from '@/utils/config'
 import { Button, Dropdown, DropdownMenu, DropdownItem, DropdownTrigger } from '@nextui-org/react'
-import { CgAdd } from 'react-icons/cg'
+import { PiPlusCircleDuotone } from 'react-icons/pi'
 import SortableItem from './item'
 
 export default function Sortable({ items, setItems }: {
@@ -37,7 +37,7 @@ export default function Sortable({ items, setItems }: {
         <div className='flex gap-4'>
             <Dropdown>
                 <DropdownTrigger className='place-self-end'>
-                    <Button color='primary' variant='flat' size='lg' startContent={<CgAdd />} isIconOnly></Button>
+                    <Button color='primary' variant='flat' size='lg' startContent={<PiPlusCircleDuotone />} isIconOnly></Button>
                 </DropdownTrigger>
                 <DropdownMenu>
                     {(Object.keys(NAME_MAP) as DataType[]).map((key) => (

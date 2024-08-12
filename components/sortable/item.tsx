@@ -2,7 +2,7 @@ import React from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Button } from '@nextui-org/react'
-import { CgClose } from 'react-icons/cg'
+import { PiXCircleDuotone } from 'react-icons/pi'
 
 export default function SortableItem(props: {
     id: string
@@ -25,7 +25,7 @@ export default function SortableItem(props: {
 
     return (
         <li ref={setNodeRef} style={style} {...attributes} {...listeners} className={'p-2 font-semibold flex justify-center items-center w-full gap-0.5'}>
-            <span>{`${props.index + 1}. ${props.name}`}</span> <Button size='sm' className='rounded-full' color='danger' variant='light' onPress={props.onDelete} isIconOnly><CgClose /></Button>
+            <span>{`${props.index + 1}. ${props.name}`}</span> <Button size='sm' className='rounded-full' color='danger' variant='light' onPress={props.onDelete} isIconOnly><PiXCircleDuotone /></Button>
         </li>
     )
 }

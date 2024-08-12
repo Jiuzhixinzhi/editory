@@ -2,14 +2,12 @@ import { auth, signIn } from '@/auth'
 import { AuroraBackground } from '@/components/aurora'
 import Main from '@/components/main'
 import Papers from '@/components/papers'
+import { themeFont } from '@/utils/fonts'
 import { Button } from '@nextui-org/react'
 import clsx from 'clsx'
 import { Metadata } from 'next'
-import { Caveat } from 'next/font/google'
 import Link from 'next/link'
 import { FcGoogle } from 'react-icons/fc'
-
-const caveat = Caveat({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'ESL exam paper editing, reimagined | Editory',
@@ -23,9 +21,9 @@ export default async function HomePage() {
     </Main>
   }
   return <AuroraBackground>
-    <Main isCentered className={clsx(caveat.className, 'flex flex-col gap-6')}>
+    <Main isCentered className={clsx(themeFont.className, 'flex flex-col gap-6')}>
       <div className='flex flex-col items-center justify-center gap-4 opacity-80'>
-        <h1 className={'text-6xl font-bold text-center text-balance'}>
+        <h1 className={'text-7xl font-bold text-center text-balance'}>
           ESL exam paper editing,
           reimagined.
         </h1>
