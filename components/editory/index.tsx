@@ -91,7 +91,7 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
 
           <section className='w-full'>
             <div className='flex items-center'>
-              <Button isIconOnly startContent={<CgExternal />} className='text-xl rounded-full' variant='light' href={id ? `https://${id}.editory.xyz/paper` : '/paper'} as={Link}></Button>
+              <Button isIconOnly startContent={<CgExternal />} className='text-xl rounded-full' variant='light' target='_blank' href={id ? `https://${id}.editory.xyz/paper` : '/paper'} as={Link}></Button>
               <h2 className='font-bold text-4xl py-8'>Paper</h2>
             </div>
             <div className='border-primary-400/20 border-4 rounded bg-primary-50/20'>
@@ -101,7 +101,7 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
 
           <section className='w-full'>
             <div className='flex items-center'>
-              <Button isIconOnly startContent={<CgExternal />} className='text-xl rounded-full' variant='light' href={id ? `https://${id}.editory.xyz/key` : '/key'} as={Link}></Button>
+              <Button isIconOnly startContent={<CgExternal />} className='text-xl rounded-full' variant='light' target='_blank' href={id ? `https://${id}.editory.xyz/key` : '/key'} as={Link}></Button>
               <h2 className='font-bold text-4xl py-8'>Key</h2>
             </div>
             <div className='border-default-500/20 border-1 rounded'>
