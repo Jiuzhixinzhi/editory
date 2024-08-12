@@ -74,9 +74,9 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
             <p className='text-sm text-default-800/50 text-balance'>
               <span className='font-bold'>Select</span> to blank a word
             </p>
-            <p className='text-sm text-default-800/50 text-balance'>
+            {id && <p className='text-sm text-default-800/50 text-balance'>
               <span className='font-bold'>Auto-saved</span> every sec
-            </p>
+            </p>}
             <p className='text-sm text-default-800/50 text-balance'>
               <span className='font-bold'>Print hotkey:</span> Ctrl + P
             </p>

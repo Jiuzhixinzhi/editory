@@ -1,7 +1,7 @@
 'use client'
 
 import { Button, ButtonGroup } from '@nextui-org/react'
-import { useEditor, EditorContent, UseEditorOptions, BubbleMenu } from '@tiptap/react'
+import { useEditor, EditorContent, UseEditorOptions, BubbleMenu, getHTMLFromFragment } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { AiOutlineBold, AiOutlineItalic, AiOutlineStrikethrough } from 'react-icons/ai'
 import { CiCircleList } from 'react-icons/ci'
@@ -46,7 +46,7 @@ const Tiptap = ({ unblank, blank, ai, ...props }: UseEditorOptions & {
     if (editor) {
       const { view, state } = editor
       const { from, to } = view.state.selection
-      return state.doc.textBetween(from, to, ' ')
+      return getHTMLFromFragment(state.doc.slice(from, to).content, editor.schema)
     }
     return ''
   }
