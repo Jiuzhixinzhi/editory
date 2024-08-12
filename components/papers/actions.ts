@@ -1,6 +1,6 @@
 'use server'
 
-import getUser, { authWrite } from '@/lib/auth'
+import getUser, { authWrite } from '@/utils/auth'
 import { getXataClient } from '@/lib/xata'
 import { genDefaultValue } from '@/utils/config'
 import { revalidatePath } from 'next/cache'

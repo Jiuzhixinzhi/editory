@@ -60,8 +60,8 @@ export type GrammarData = {
 
 - [x] 以云端同步代替 cookie
 - [x] 钓鱼的 key 好像有点问题
+- [x] 登入用户的试卷生成
 - [ ] 需限制挖空词**内部**不得带有格式
 - [ ] `Generator`中的`JSX key`需要进行修改
-- [ ] 登入用户的试卷生成暂时还没做
 - [ ] 修复后替换 `/utils/temp.ts`
 - [ ] NextAuth 大版本升级

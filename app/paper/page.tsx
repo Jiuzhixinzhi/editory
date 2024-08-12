@@ -1,6 +1,6 @@
 import Paper from '@/components/paper'
 import { getData } from '@/utils/cookies'
 
-export default function PaperPage() {
-    return <Paper data={getData() ?? []} />
+export default async function PaperPage() {
+    return <Paper data={await getData()} />
 }

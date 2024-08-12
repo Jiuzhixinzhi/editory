@@ -1,5 +1,5 @@
 import { auth } from '@/auth'
-import { getXataClient } from './xata'
+import { getXataClient } from '../lib/xata'
 
 const xata = getXataClient()
 

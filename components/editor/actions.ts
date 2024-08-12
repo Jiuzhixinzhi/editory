@@ -4,7 +4,7 @@ import { streamObject } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { createStreamableValue } from 'ai/rsc'
 import { z } from 'zod'
-import { authWrite } from '@/lib/auth'
+import { authWrite } from '@/utils/auth'
 import { DataType } from '@/utils/types'
 
 export default async function generate({ id, prompt, type }: { id: string, prompt: string, type: DataType }) {
