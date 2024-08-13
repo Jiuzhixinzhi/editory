@@ -1,5 +1,5 @@
 import type Data from './types'
-import type { FishingData, ClozeData, GrammarData, SentenceChoiceData, Config } from './types'
+import type { FishingData, ClozeData, GrammarData, SentenceChoiceData, ReadingData, Config } from './types'
 import { ALPHABET_SET, NAME_MAP } from './config'
 
 import type { JSX } from 'react'
@@ -21,6 +21,8 @@ function generator_getter(data: Data, config: Config): () => Generator<Data> | n
             return () => new GrammarGenerator(data, config)
         case '4/6':
             return () => new SentenceChoiceGenerator(data, config)
+        case 'reading':
+            return () => new ReadingGenerator(data, config)
         default:
             return () => null
     }
@@ -29,7 +31,6 @@ function generator_getter(data: Data, config: Config): () => Generator<Data> | n
 
 export function generatePaper(data: Data[]) {
     let start = 1
-    var generator: Generator<Data> | null = null
 
     return data.map((data) => {
         let generator = generator_getter(data, { start })()
@@ -43,7 +44,6 @@ export function generatePaper(data: Data[]) {
 
 export function generateKey(data: Data[]) {
     let start = 1
-    var generator: Generator<Data> | null = null
 
     return data.map((data) => {
         let generator = generator_getter(data, { start })()
@@ -308,6 +308,43 @@ class SentenceChoiceGenerator extends Generator<SentenceChoiceData> {
                 <span className="paper-option-marker pr-2">{this.start + index}.</span>
                 <span className='paper-option-content'>{ALPHABET_SET[this.options.indexOf(correctAnswer)]}</span>
             </p>
+        ))
+        return keyJSX
+    }
+}
+
+class ReadingGenerator extends Generator<ReadingData> {
+    protected onBeforeWalk() { }
+
+    protected replacer(node: DOMNode): JSX.Element | undefined { return }
+
+    protected onAfterWalk(): void { }
+
+    protected addPaper(): JSX.Element[] {
+        const questions = this.data.questions.map(question => {
+            this.countQuestions++
+            const options = question.a.map((option, index) => (
+                <p key={option}><span>{ALPHABET_SET[index]}.</span> <span>{option}</span></p>
+            ))
+            return (
+                <div key={question.q}>
+                    <p><span>{this.getNumber()}.</span> <span>{question.q}</span></p>
+                    {options}
+                </div>
+            )
+        })
+        return [
+            this.paper,
+            <section className="paper-options my-2 flex flex-wrap gap-x-8" key="questions">{questions}</section>
+        ]
+    }
+
+    protected generateKey(): JSX.Element[] {
+        const keyJSX = this.data.questions.map((question, index) => (
+            <span key={question.q}>
+                <span className="paper-option-marker pr-2">{this.start + index}.</span>
+                <span className='paper-option-content'>{ALPHABET_SET[question.correct]}</span>
+            </span>
         ))
         return keyJSX
     }
