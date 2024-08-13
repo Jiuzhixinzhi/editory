@@ -12,6 +12,7 @@
     - [x] `/fishing` — 小猫钓鱼题
     - [x] `/cloze` — 完形填空
     - [x] `/grammar` — 语法填空
+    - [ ] `/sentence` — 六选四
   - `/paper` — 试卷展示
   - `/key` — 答案展示
 - `/utils`
@@ -32,7 +33,7 @@ export type FishingData = {
 }
 ```
 
-注：挖空词在 `text` 中以 `<code></code>`包裹，下同（别问为什么是 code【捂脸】）。
+注：挖空部分在 `text` 中以 `<code></code>` 包裹，下同。
 
 #### 完形填空
 
@@ -41,7 +42,7 @@ export type ClozeData = {
     id: string
     text: string
     type: 'cloze'
-    distractors: Record<string, string[]> // { '被挖空词': ['选项1'. '选项2', '选项3'] }
+    distractors: Record<string, string[]> // { '被挖空词': ['干扰项1'. '干扰项2', '干扰项3'] }
 }
 ```
 
@@ -53,6 +54,17 @@ export type GrammarData = {
     text: string
     type: 'grammar'
     hints: Record<string, string | undefined>
+}
+```
+
+#### 六选四
+
+```ts
+export type SentenceChoiceData = {
+    id: string
+    text: string
+    type: '4/6'
+    distractors: string[]
 }
 ```
 

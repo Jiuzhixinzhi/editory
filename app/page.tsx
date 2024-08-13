@@ -8,6 +8,10 @@ import clsx from 'clsx'
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { FcGoogle } from 'react-icons/fc'
+import craft from './craft.png'
+import generatePaper from './generate-paper.png'
+import generateKey from './generate-key.png'
+import Image from 'next/image'
 
 export const metadata: Metadata = {
   title: 'ESL exam paper editing, reimagined | Editory',
@@ -21,17 +25,35 @@ export default async function HomePage() {
     </Main>
   }
   return <AuroraBackground>
-    <Main isCentered className={clsx(themeFont.className, 'flex flex-col gap-6')}>
-      <div className='flex flex-col items-center justify-center gap-4 opacity-80'>
-        <h1 className={'text-7xl font-bold text-center text-balance'}>
-          ESL exam paper editing,
-          reimagined.
-        </h1>
-        <p className={'text-center text-3xl text-balance'}>
-          You handcraft exam papers.
-          We handle the rest.
-        </p>
+    <Main isCentered className={clsx(themeFont.className, 'flex flex-col gap-6 opacity-80')}>
+      <h1 className={'text-7xl font-bold text-center text-balance mt-6'}>
+        ESL exam paper editing,
+        reimagined.
+      </h1>
+
+      <div className='flex gap-4 w-4/5 pointer-events-none'>
+        <div className='border-primary-400/20 border-4 rounded bg-primary-50/20 flex flex-col gap-4 p-4 basis-1/2'>
+          <h2 className='text-4xl font-bold'>Craft the content. Or draft with AI.</h2>
+          <div className='w-full h-full flex justify-center items-center'>
+            <Image src={craft} alt='Craft the content.' className='w-full rounded-lg opacity-90' />
+          </div>
+        </div>
+        <div className='flex flex-col gap-4 basis-1/2'>
+          <div className='border-default-900/20 border-1 rounded basis-1/2 flex flex-col gap-4 p-4'>
+            <h2 className='text-2xl'>Have the formalities generated.</h2>
+            <div className='w-full h-full flex justify-center items-center'>
+              <Image src={generatePaper} alt='Generate paper.' className='w-full rounded-lg opacity-90' />
+            </div>
+          </div>
+          <div className='border-primary-900/20 border-1 rounded basis-1/2 flex flex-col gap-4 p-4'>
+            <h2 className='text-2xl'>And the key.</h2>
+            <div className='w-full h-full flex justify-center items-center'>
+              <Image src={generateKey} alt='Generate key.' className='w-full rounded-lg opacity-90' />
+            </div>
+          </div>
+        </div>
       </div>
+
       <form className='flex justify-center gap-6' action={async () => {
         'use server'
         await signIn('google')

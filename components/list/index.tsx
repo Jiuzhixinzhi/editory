@@ -12,7 +12,7 @@ export default function List({ items, placeholder, add, remove }: { items: strin
                 setInput('')
             })}>Add</Button>
         </div>
-        <div className={'overflow-x-auto flex gap-2'}>
+        <div className={'overflow-x-auto flex gap-2 max-w-full flex-wrap'}>
             {items.map(item => <Chip key={item} size='sm' variant='bordered' className='opacity-70' onClose={remove && (() => {
                 remove(item)
             })} color={'primary'}>{item}</Chip>)}

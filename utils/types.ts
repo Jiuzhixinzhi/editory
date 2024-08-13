@@ -1,4 +1,4 @@
-type Data = FishingData | ClozeData | GrammarData
+type Data = FishingData | ClozeData | GrammarData | SentenceChoiceData
 
 export type DataType = Data['type']
 
@@ -22,6 +22,13 @@ export type GrammarData = {
     text: string
     type: 'grammar'
     hints: Record<string, string | undefined>
+}
+
+export type SentenceChoiceData = {
+    id: string
+    text: string
+    type: '4/6'
+    distractors: string[]
 }
 
 export type Config = {

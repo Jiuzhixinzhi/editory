@@ -2,19 +2,19 @@
 
 import Tiptap from '../../tiptap'
 import List from '../../list'
-import { FishingData } from '@/utils/types'
+import { SentenceChoiceData } from '@/utils/types'
 import { without } from 'es-toolkit'
 
-export default function FishingEditor({
+export default function SentenceChoiceEditor({
     data,
     setData,
     id
 }: {
-    data: FishingData
-    setData: (data: FishingData) => void
+    data: SentenceChoiceData
+    setData: (data: SentenceChoiceData) => void
     id?: string
 }) {
-    return <div className='flex flex-col gap-2 before:content-["Vocabulary"] before:text-primary-300 before:font-bold before:-mb-2 my-5'>
+    return <div className='flex flex-col gap-2 before:content-["Sentence_Choice"] before:text-primary-300 before:font-bold before:-mb-2 my-5'>
         <List
             items={data.distractors}
             placeholder='Add distractor(s) ...'
@@ -40,11 +40,6 @@ export default function FishingEditor({
                     text: editor.getHTML()
                 })
             }}
-            ai={id ? {
-                id,
-                setData,
-                data
-            } : undefined}
         />
     </div>
 }

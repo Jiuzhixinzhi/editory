@@ -9,11 +9,13 @@ import { useEffect, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import Cookies from 'js-cookie'
 import { Button } from '@nextui-org/react'
-import { PiArrowSquareOutDuotone, PiSealQuestionDuotone, PiOptionDuotone, PiMagicWandDuotone } from 'react-icons/pi'
+import { PiArrowSquareOutDuotone, PiSealQuestionDuotone, PiOptionDuotone, PiMagicWandDuotone, PiSmileySadDuotone } from 'react-icons/pi'
 import { genDefaultValue } from '@/utils/config'
 import Main from '../main'
 import { updatePaper } from '../papers/actions'
 import Link from 'next/link'
+import clsx from 'clsx'
+import { themeFont } from '@/utils/fonts'
 
 export default function Editory({ data, id }: { data: Data[] | null, id?: string }) {
   const [items, setItems] = useState<Data[]>(data ?? [genDefaultValue('grammar'), genDefaultValue('fishing'), genDefaultValue('cloze')])
@@ -33,8 +35,16 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
   }, [save, itemsString])
 
   return (
-    <Main>
-      <div className='flex gap-4'>
+    <Main isCentered>
+      <div className={clsx('flex flex-col gap-2 text-center text-balance md:hidden', themeFont.className)}>
+        <h2 className='font-bold text-5xl text-primary-300'>Sorry <PiSmileySadDuotone className='inline-block' /></h2>
+        <p className='text-primary-400/70 text-2xl'>
+          Our editor is designed for desktop.<br></br>
+          We hope you&apos;d never have to edit a paper on mobile.
+        </p>
+      </div>
+
+      <div className='hidden gap-4 md:flex w-full'>
         <div className='flex flex-col gap-2 p-4 text-end basis-1/12'>
           <h2 className='font-bold text-4xl text-primary-300 mt-8'>Editor</h2>
 
@@ -63,18 +73,18 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
               </div>
               <hr className='flex-1 border-t-primary-400/70 border-t-1' />
               <div>
-                AI gen
+                AI draft
               </div>
             </div>
           </div>
 
           <div className='flex flex-col gap-2'>
             <p className='text-sm text-default-800/50 text-balance'>
-             {
-              id
-              ? <><span className='font-bold'>Auto-saved</span> every sec</>
-              : <><Link href='/' className='font-extrabold underline'>Sign in</Link> to sync to the cloud</>
-             }
+              {
+                id
+                  ? <><span className='font-bold'>Auto-saved</span> every sec</>
+                  : <><Link href='/' className='font-extrabold underline'>Sign in</Link> to sync to the cloud</>
+              }
             </p>
             <p className='text-sm text-default-800/50 text-balance'>
               <span className='font-bold'>Select</span> to blank a word
@@ -82,6 +92,13 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
             <p className='text-sm text-default-800/50 text-balance'>
               <span className='font-bold'>Print hotkey:</span> Ctrl + P
             </p>
+            {
+              id && (
+                <p className='text-sm text-default-800/50 text-balance'>
+                  <span className='font-bold'>Share a draft</span> via paper link.
+                </p>
+              )
+            }
           </div>
         </div>
         <section className='flex flex-col basis-5/12'>
