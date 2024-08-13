@@ -12,7 +12,8 @@
     - [x] `/fishing` — 小猫钓鱼题
     - [x] `/cloze` — 完形填空
     - [x] `/grammar` — 语法填空
-    - [ ] `/sentence` — 六选四
+    - [x] `/sentence` — 六选四
+    - [ ] `/reading` — 阅读理解
   - `/paper` — 试卷展示
   - `/key` — 答案展示
 - `/utils`
@@ -54,6 +55,27 @@ export type GrammarData = {
     text: string
     type: 'grammar'
     hints: Record<string, string | undefined>
+}
+```
+
+#### 阅读理解
+
+```ts
+export type ReadingData = {
+    id: string
+    text: string
+    type: 'reading'
+    questions: Question[]
+}
+```
+
+注：Question 类型声明如下（听力同）：
+
+```ts
+export type Question = {
+    q: string
+    a: string[]
+    correct: number // index of the correct answer
 }
 ```
 

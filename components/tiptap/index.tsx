@@ -13,9 +13,10 @@ import { useCallback } from 'react'
 
 const className = 'focus:outline-none prose prose-code:underline prose-code:underline-offset-4 prose-code:text-primary/40 prose-blockquote:my-3 prose-h1:my-3 prose-h2:my-2.5 prose-h3:my-2 prose-p:my-2 prose-ul:my-1 prose-li:my-0 prose-img:my-4 dark:prose-invert'
 
-const Tiptap = ({ unblank, blank, ai, ...props }: UseEditorOptions & {
+const Tiptap = ({ unblank, blank, unblankable, ai, ...props }: UseEditorOptions & {
   blank?: (selection: string) => void,
-  unblank?: (selection: string) => void
+  unblank?: (selection: string) => void,
+  unblankable?: boolean,
   ai?: {
     id: string,
     data: Data,
@@ -112,7 +113,7 @@ const Tiptap = ({ unblank, blank, ai, ...props }: UseEditorOptions & {
           startContent={<PiImageDuotone />}
           isIconOnly
         ></Button>
-        <Button
+        {!unblankable && <Button
           onPress={() => {
             if (!editor.isActive('code') && blank) {
               blank(getSelection())
@@ -125,7 +126,7 @@ const Tiptap = ({ unblank, blank, ai, ...props }: UseEditorOptions & {
           variant={editor.isActive('code') ? 'shadow' : 'light'}
           startContent={<PiSealQuestionDuotone />}
           isIconOnly
-        ></Button>
+        ></Button>}
         {blank && editor.isActive('code') && <Button
           onPress={() => {
             blank(getSelection())
@@ -138,7 +139,7 @@ const Tiptap = ({ unblank, blank, ai, ...props }: UseEditorOptions & {
           onPress={async () => {
             const { object } = await generate({ id: ai.id, prompt: getSelection(), type: ai.data.type })
             for await (const partialObject of readStreamableValue(object)) {
-              if (editor) {
+              if (editor && partialObject.text) {
                 editor.commands.setContent(partialObject.text)
               }
               ai.setData({

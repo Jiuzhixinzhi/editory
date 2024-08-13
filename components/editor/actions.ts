@@ -56,6 +56,17 @@ const getConfig = (type: DataType) => {
                     hints: z.record(z.string().describe('被挖空的实词在文中的形式'),z.string().describe('实词原形'))
                 })
             }
+        case 'reading':
+            return {
+                system: `把prompt出成英语高考阅读理解题，高考难度。\n在questions输出题目数组。每个题目以q为问题，a为四个选项，correct为正确选项下标。\n一共出五题，考察内容均匀：你可以出事实信息题、内容推断题（What can you infer）、标题推测题（What is the best title）、态度判断题（What is the author's attitude）等。必须保留其余原有的HTML格式和标签。`,
+                schema: z.object({
+                    questions: z.array(z.object({
+                        q: z.string().describe('题目'),
+                        a: z.array(z.string()).describe('选项'),
+                        correct: z.number().describe('正确答案的下标')
+                    }))
+                })
+            }
         default:
             throw new Error()
     }

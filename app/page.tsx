@@ -31,7 +31,7 @@ export default async function HomePage() {
         reimagined.
       </h1>
 
-      <div className='flex gap-4 w-4/5 pointer-events-none'>
+      <div className='flex gap-4 w-5/6 pointer-events-none'>
         <div className='border-primary-400/20 border-4 rounded bg-primary-50/20 flex flex-col gap-4 p-4 basis-1/2'>
           <h2 className='text-4xl font-bold'>Craft the content. Or draft with AI.</h2>
           <div className='w-full h-full flex justify-center items-center'>

@@ -6,6 +6,7 @@ import Data from '@/utils/types'
 import ClozeEditor from './cloze'
 import GrammarEditor from './grammar'
 import SentenceChoiceEditor from './sentence'
+import ReadingEditor from './reading'
 
 export default function Editor({ items, setItems, id }: { items: Data[], setItems: Dispatch<SetStateAction<Data[]>>, id?: string }) {
     const setData = (data: Data) => setItems((prevItems) => prevItems.map((item) => item.id === data.id ? data : item))
@@ -39,6 +40,14 @@ export default function Editor({ items, setItems, id }: { items: Data[], setItem
 
                     case '4/6':
                         return <SentenceChoiceEditor
+                            key={data.id}
+                            data={data}
+                            setData={setData}
+                            id={id}
+                        />
+
+                    case 'reading':
+                        return <ReadingEditor
                             key={data.id}
                             data={data}
                             setData={setData}

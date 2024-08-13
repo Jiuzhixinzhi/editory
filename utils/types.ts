@@ -1,4 +1,4 @@
-type Data = FishingData | ClozeData | GrammarData | SentenceChoiceData
+type Data = FishingData | ClozeData | GrammarData | SentenceChoiceData | ReadingData
 
 export type DataType = Data['type']
 
@@ -29,6 +29,19 @@ export type SentenceChoiceData = {
     text: string
     type: '4/6'
     distractors: string[]
+}
+
+export type Question = {
+    q: string
+    a: string[]
+    correct: number // index of correct answer
+}
+
+export type ReadingData = {
+    id: string
+    text: string
+    type: 'reading'
+    questions: Question[]
 }
 
 export type Config = {
