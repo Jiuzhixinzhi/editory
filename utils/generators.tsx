@@ -1,5 +1,5 @@
 import type Data from './types'
-import type { FishingData, ClozeData, GrammarData, Config } from './types'
+import type { FishingData, ClozeData, GrammarData, SentenceChoiceData, Config } from './types'
 import { ALPHABET_SET, NAME_MAP } from './config'
 
 import type { JSX } from 'react'
@@ -11,30 +11,33 @@ import { ElementType } from 'domelementtype'
 import type { Element, Text } from 'domhandler'
 
 
+function generator_getter(data: Data, config: Config): () => Generator<Data> | null {
+    switch (data.type) {
+        case 'fishing':
+            return () => new FishingGenerator(data, config)
+        case 'cloze':
+            return () => new ClozeGenerator(data, config)
+        case 'grammar':
+            return () => new GrammarGenerator(data, config)
+        case '4/6':
+            return () => new SentenceChoiceGenerator(data, config)
+        default:
+            return () => null
+    }
+}
+
+
 export function generatePaper(data: Data[]) {
     let start = 1
     var generator: Generator<Data> | null = null
 
     return data.map((data) => {
-        switch (data.type) {
-            case 'fishing':
-                // 由含选项的方框 + 正文组成
-                generator = new FishingGenerator(data, { start })
-                start += generator.countQuestions
-                return generator.paper
-            case 'cloze':
-                // 由正文 + 选项组成
-                generator = new ClozeGenerator(data, { start })
-                start += generator.countQuestions
-                return generator.paper
-            case 'grammar':
-                // 由正文 + 选项组成
-                generator = new GrammarGenerator(data, { start })
-                start += generator.countQuestions
-                return generator.paper
-            default:
-                return <></>
+        let generator = generator_getter(data, { start })()
+        if (generator === null) {
+            return <></>
         }
+        start += generator.countQuestions
+        return generator.paper
     })
 }
 
@@ -43,25 +46,12 @@ export function generateKey(data: Data[]) {
     var generator: Generator<Data> | null = null
 
     return data.map((data) => {
-        switch (data.type) {
-            case 'fishing':
-                // 由含选项的方框 + 正文组成
-                generator = new FishingGenerator(data, { start })
-                start += generator.countQuestions
-                return generator.key
-            case 'cloze':
-                // 由正文 + 选项组成
-                generator = new ClozeGenerator(data, { start })
-                start += generator.countQuestions
-                return generator.key
-            case 'grammar':
-                // 由正文 + 选项组成
-                generator = new GrammarGenerator(data, { start })
-                start += generator.countQuestions
-                return generator.key
-            default:
-                return <></>
+        let generator = generator_getter(data, { start })()
+        if (generator === null) {
+            return <></>
         }
+        start += generator.countQuestions
+        return generator.key
     })
 }
 
@@ -110,6 +100,11 @@ abstract class Generator<T extends Data> {
         return this.start + this.countQuestions - 1
     }
 
+    public getBlankElement(number?: number): JSX.Element {
+        let _number = number ?? this.getNumber()
+        return <u>{this.spaces}{_number}{this.spaces}</u>
+    }
+
     protected abstract onBeforeWalk(): void
 
     /** Since replacer is in object {replace: this.replacer}, which can cause incorrect this context. */
@@ -134,9 +129,7 @@ class FishingGenerator extends Generator<FishingData> {
         if (node.type === ElementType.Tag && node.tagName === 'code') {
             this.countQuestions++
             this.options.push((node.children[0] as Text)?.data)
-            return (
-                <u>{this.spaces}{this.getNumber()}{this.spaces}</u>
-            )
+            return this.getBlankElement()
         }
     }
 
@@ -183,9 +176,7 @@ class ClozeGenerator extends Generator<ClozeData> {
             this.countQuestions++
             const content = ((node as Element).children[0] as Text)?.data
             this.options[content] = [content, ...(this.data.distractors[content] ?? [])]
-            return (
-                <u>{this.spaces}{this.getNumber()}{this.spaces}</u>
-            )
+            return this.getBlankElement()
         }
     }
 
@@ -254,7 +245,7 @@ class GrammarGenerator extends Generator<GrammarData> {
                 underlines.pop()
                 return <span>{underlines}</span>
             } else {
-                return <span><u>{this.spaces}{this.getNumber()}{this.spaces}</u> <span className='paper-hint'>({hint})</span></span>
+                return <span>{this.getBlankElement()} <span className='paper-hint'>({hint})</span></span>
             }
         }
     }
@@ -268,6 +259,55 @@ class GrammarGenerator extends Generator<GrammarData> {
     protected generateKey(): JSX.Element[] {
         const keyJSX = this.keyContents.map((content, index) => (
             <span key={content}>{this.start + index}. {content}</span>
+        ))
+        return keyJSX
+    }
+}
+
+class SentenceChoiceGenerator extends Generator<SentenceChoiceData> {
+    private options: string[] = []
+    private correctAnswers: string[] = []
+
+    protected onBeforeWalk() {
+        this.options = []
+        this.correctAnswers = []
+    }
+
+    protected replacer(node: DOMNode): JSX.Element | undefined {
+        if (node.type === ElementType.Tag && node.tagName === 'code') {
+            this.countQuestions++
+            const content = ((node as Element).children[0] as Text | null)?.data ?? ""
+            this.options.push(content)
+            this.correctAnswers.push(content)
+            return this.getBlankElement()
+        }
+    }
+
+    protected onAfterWalk(): void {
+        this.options.push(...this.data.distractors)
+        const seed = this.getSeed(this.options.join('&'))
+        this.options = fastShuffle(seed, this.options)
+    }
+
+    protected addPaper(): JSX.Element[] {
+        const options = this.options.map((option, index) => (
+            <span key={option}>
+                <span className="paper-option-marker pr-2">{ALPHABET_SET[index]}.</span>
+                <span className='paper-option-content'>{option}</span>
+            </span>
+        ))
+        return [
+            <section className="paper-options border border-default-900 p-4 my-2 flex flex-wrap gap-x-8" key={options.join('')}>{options}</section>,
+            this.paper,
+        ]
+    }
+
+    protected generateKey(): JSX.Element[] {
+        const keyJSX = this.correctAnswers.map((correctAnswer, index) => (
+            <p key={correctAnswer}>
+                <span className="paper-option-marker pr-2">{this.start + index}.</span>
+                <span className='paper-option-content'>{ALPHABET_SET[this.options.indexOf(correctAnswer)]}</span>
+            </p>
         ))
         return keyJSX
     }
