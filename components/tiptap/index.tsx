@@ -3,11 +3,13 @@
 import { Button, ButtonGroup } from '@nextui-org/react'
 import { useEditor, EditorContent, UseEditorOptions, BubbleMenu, getHTMLFromFragment } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { PiTextBDuotone, PiTextItalicDuotone, PiTextStrikethroughDuotone, PiListBulletsDuotone, PiQuotesDuotone, PiTextHOneDuotone, PiTextHTwoDuotone, PiTextHThreeDuotone, PiSealQuestionDuotone, PiOptionDuotone, PiMagicWandDuotone } from 'react-icons/pi'
+import { PiTextBDuotone, PiTextItalicDuotone, PiTextStrikethroughDuotone, PiListBulletsDuotone, PiQuotesDuotone, PiTextHOneDuotone, PiTextHTwoDuotone, PiTextHThreeDuotone, PiSealQuestionDuotone, PiOptionDuotone, PiMagicWandDuotone, PiImageDuotone } from 'react-icons/pi'
 import TextStyle from '@tiptap/extension-text-style'
+import Image from '@tiptap/extension-image'
 import Data from '@/utils/types'
 import { readStreamableValue } from 'ai/rsc'
 import generate from '../editor/actions'
+import { useCallback } from 'react'
 
 const className = 'focus:outline-none prose prose-code:underline prose-code:underline-offset-4 prose-code:text-primary/40 prose-blockquote:my-3 prose-h1:my-3 prose-h2:my-2.5 prose-h3:my-2 prose-p:my-2 prose-ul:my-1 prose-li:my-0 prose-img:my-4 dark:prose-invert'
 
@@ -24,6 +26,7 @@ const Tiptap = ({ unblank, blank, ai, ...props }: UseEditorOptions & {
     extensions: [
       StarterKit,
       TextStyle,
+      Image
     ],
     editorProps: {
       attributes: {
@@ -35,6 +38,13 @@ const Tiptap = ({ unblank, blank, ai, ...props }: UseEditorOptions & {
     immediatelyRender: false,
     ...props
   })
+
+  const addImage = useCallback(() => {
+    const url = window.prompt('Enter the URL of the image.')
+    if (url && editor) {
+      editor.chain().focus().setImage({ src: url }).run()
+    }
+  }, [editor])
 
   const getSelection = () => {
     if (editor) {
@@ -94,6 +104,12 @@ const Tiptap = ({ unblank, blank, ai, ...props }: UseEditorOptions & {
           onPress={() => editor.chain().focus().toggleBulletList().run()}
           variant={editor.isActive('bulletList') ? 'shadow' : 'light'}
           startContent={<PiListBulletsDuotone />}
+          isIconOnly
+        ></Button>
+        <Button
+          onPress={addImage}
+          variant='light'
+          startContent={<PiImageDuotone />}
           isIconOnly
         ></Button>
         <Button

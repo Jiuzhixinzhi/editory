@@ -6,6 +6,7 @@ import clsx from 'clsx'
 import getSubdomain from '@/utils/routing'
 import Footer from './footer'
 import { generalFont } from '@/utils/fonts'
+import { Analytics } from '@vercel/analytics/react'
 
 const APP_NAME = 'Editory'
 const APP_DEFAULT_TITLE = 'Editory'
@@ -54,6 +55,7 @@ export default function RootLayout({
           {children}
           <Footer />
         </Providers>
+        <Analytics />
       </body>
     </html>
   )

@@ -35,20 +35,20 @@ export default async function HomePage() {
         <div className='border-primary-400/20 border-4 rounded bg-primary-50/20 flex flex-col gap-4 p-4 basis-1/2'>
           <h2 className='text-4xl font-bold'>Craft the content. Or draft with AI.</h2>
           <div className='w-full h-full flex justify-center items-center'>
-            <Image src={craft} alt='Craft the content.' className='w-full rounded-lg opacity-90' />
+            <Image src={craft} alt='Craft the content.' className='w-full rounded-lg' />
           </div>
         </div>
         <div className='flex flex-col gap-4 basis-1/2'>
           <div className='border-default-900/20 border-1 rounded basis-1/2 flex flex-col gap-4 p-4'>
             <h2 className='text-2xl'>Have the formalities generated.</h2>
             <div className='w-full h-full flex justify-center items-center'>
-              <Image src={generatePaper} alt='Generate paper.' className='w-full rounded-lg opacity-90' />
+              <Image src={generatePaper} alt='Generate paper.' className='w-full rounded-lg' />
             </div>
           </div>
           <div className='border-primary-900/20 border-1 rounded basis-1/2 flex flex-col gap-4 p-4'>
             <h2 className='text-2xl'>And the key.</h2>
             <div className='w-full h-full flex justify-center items-center'>
-              <Image src={generateKey} alt='Generate key.' className='w-full rounded-lg opacity-90' />
+              <Image src={generateKey} alt='Generate key.' className='w-full rounded-lg' />
             </div>
           </div>
         </div>
