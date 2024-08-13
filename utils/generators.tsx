@@ -72,9 +72,9 @@ abstract class Generator<T extends Data> {
         this.onBeforeWalk()
         // to prevent incorrect this context
         const replacer = this.replacer.bind(this)
-        const paperBasic = parse(data.text, {
+        const paperBasic = 'text' in data ? parse(data.text, {
             replace: replacer,
-        })
+        }) : undefined
         this.paper = (
             <section>
                 {paperBasic}

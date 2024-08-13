@@ -9,6 +9,7 @@ export const ABCD_SET = [
 ]
 
 export const NAME_MAP: Record<DataType, string> = {
+    'listening': 'Listening',
     'grammar': 'Grammar',
     'fishing': 'Vocabulary',
     'cloze': 'Cloze',
@@ -78,6 +79,18 @@ export const genDefaultValue = (type: DataType): Data => {
                     a: ['The storage cost of one gigabyte has been on the decline.', 'People avoid tidying up their shame closets because it is very sensitive and private.', 'We can find a respite from the relentless digital life in nature by gardening and planting.', 'Social media sometimes gives people a false sense of companionship.'],
                     correct: 3,
                 }],
+            }
+
+        case 'listening':
+            return {
+                id: crypto.randomUUID(),
+                questions: [{
+                    transcript: 'W: Aren’t you cold? Why aren’t you wearing a coat?\nM: I overslept this morning, so I ran out of the house without listening to the forecast.',
+                    q: 'What does the man mean?',
+                    a: ['He didn’t know it would be cold.', 'He misunderstood the weather report.', 'He didn’t have time to look for the coat.', 'He forgot to bring the coat.'],
+                    correct: 0,
+                }],
+                type: 'listening',
             }
 
         default:

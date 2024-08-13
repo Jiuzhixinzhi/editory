@@ -14,6 +14,7 @@
     - [x] `/grammar` — 语法填空
     - [x] `/sentence` — 六选四
     - [ ] `/reading` — 阅读理解
+    - [ ] `/listening` — 听力
   - `/paper` — 试卷展示
   - `/key` — 答案展示
 - `/utils`
@@ -21,6 +22,26 @@
   - `/types` — 类型声明
 
 ### 各题型数据结构
+
+#### 听力
+
+```ts
+export type Question = {
+    q: string
+    a: string[]
+    correct: number // index of the correct answer
+}
+
+export type ListeningQuestion = Question & {
+    transcript: string
+}
+
+export type ListeningData = {
+    id: string
+    type: 'listening'
+    questions: ListeningQuestion[]
+}
+```
 
 #### 小猫钓鱼
 
@@ -61,21 +82,13 @@ export type GrammarData = {
 #### 阅读理解
 
 ```ts
+export type ReadingQuestion = Question
+
 export type ReadingData = {
     id: string
     text: string
     type: 'reading'
-    questions: Question[]
-}
-```
-
-注：Question 类型声明如下（听力同）：
-
-```ts
-export type Question = {
-    q: string
-    a: string[]
-    correct: number // index of the correct answer
+    questions: ReadingQuestion[]
 }
 ```
 
