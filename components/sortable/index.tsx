@@ -17,7 +17,7 @@ import {
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import Data, { DataType } from '@/utils/types'
-import { genDefaultValue, NAME_MAP } from '@/utils/config'
+import { genDefaultValue, ICON_MAP, NAME_MAP } from '@/utils/config'
 import { Button, Dropdown, DropdownMenu, DropdownItem, DropdownTrigger } from '@nextui-org/react'
 import { PiPlusCircleDuotone } from 'react-icons/pi'
 import SortableItem from './item'
@@ -44,7 +44,7 @@ export default function Sortable({ items, setItems }: {
                     </DropdownTrigger>
                     <DropdownMenu>
                         {(Object.keys(NAME_MAP) as DataType[]).map((key) => (
-                            <DropdownItem key={key} onPress={() => {
+                            <DropdownItem startContent={ICON_MAP[key]} key={key} onPress={() => {
                                 setItems((items) => [...items, genDefaultValue(key)])
                             }}>
                                 {NAME_MAP[key]}

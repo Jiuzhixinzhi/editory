@@ -456,7 +456,7 @@ class ReadingGenerator extends Generator<ReadingData> {
     protected addPaper(): JSX.Element[] {
         const questions = this.data.questions.map(question => {
             this.countQuestions++
-            const options = question.a.map((option, index) => (
+            const options = question.a?.map((option, index) => (
                 <p key={option}><span>{ALPHABET_SET[index]}.</span> <span>{option}</span></p>
             ))
             return (
