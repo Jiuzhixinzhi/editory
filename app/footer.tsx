@@ -9,9 +9,9 @@ export default function Footer() {
     if (getSubdomain()) return null
 
     return <footer className={clsx(themeFont.className, 'flex justify-center items-center my-4 opacity-50')}>
-        <ButtonGroup size='sm' variant='flat' color='primary' radius='full'>
+        <ButtonGroup variant='flat' color='primary' radius='full'>
             <Button isIconOnly startContent={<PiGithubLogoDuotone />} href='https://github.com/Jiuzhixinzhi/editory' target='_blank' as={Link}></Button>
-            <Button endContent={<PiHeartDuotone />} className='font-bold'>Made with</Button>
+            <Button startContent={<PiHeartDuotone />} endContent={<PiHeartDuotone />} className='font-bold' href='/reimagine-the-creation-of-esl-exam-papers' as={Link}>Software that Specialises</Button>
             <Button isIconOnly startContent={<PiMailboxDuotone />} href='mailto:hi@editory.xyz' as={Link}></Button>
         </ButtonGroup>
     </footer>

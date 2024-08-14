@@ -17,7 +17,7 @@ export default function NotFound({
             <Button
                 color='primary'
                 variant='flat'
-                onClick={reset}
+                onPress={reset}
             >
                 Try again
             </Button>

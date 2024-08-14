@@ -8,7 +8,7 @@ export default function List({ items, placeholder, add, remove }: { items: strin
     return <div className='flex flex-col gap-2'>
         <div className='flex gap-2'>
             <Input type='text' placeholder={placeholder} color='primary' value={input} onValueChange={setInput} variant='underlined' />
-            <Button startContent={<PiPlusDuotone />} variant='flat' color='primary' onClick={add && (() => {
+            <Button startContent={<PiPlusDuotone />} variant='flat' color='primary' onPress={add && (() => {
                 add(input)
                 setInput('')
             })}>Add</Button>
