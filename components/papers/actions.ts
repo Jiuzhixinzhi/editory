@@ -18,13 +18,15 @@ export async function getPapers() {
     return papers
 }
 
-export async function createPaper({ id, name }: { id: string, name: string }) {
+export async function createPaper({ id, name, full }: { id: string, name: string, full?: boolean }) {
     const user = await getUser()
     await xata.db.papers.create({
         id,
         name,
         user: user.id,
-        data: [genDefaultValue('grammar'), genDefaultValue('fishing'), genDefaultValue('cloze')]
+        data: full
+            ? [genDefaultValue('listening'), genDefaultValue('grammar'), genDefaultValue('fishing'), genDefaultValue('cloze'), genDefaultValue('reading'), genDefaultValue('reading'), genDefaultValue('reading'), genDefaultValue('4/6')]
+            : [genDefaultValue('grammar'), genDefaultValue('fishing'), genDefaultValue('cloze')]
     })
     revalidatePath('/')
 }

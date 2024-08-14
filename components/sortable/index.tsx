@@ -21,6 +21,7 @@ import { genDefaultValue, NAME_MAP } from '@/utils/config'
 import { Button, Dropdown, DropdownMenu, DropdownItem, DropdownTrigger } from '@nextui-org/react'
 import { PiPlusCircleDuotone } from 'react-icons/pi'
 import SortableItem from './item'
+import Download from '../download'
 
 export default function Sortable({ items, setItems }: {
     items: Data[]
@@ -35,20 +36,23 @@ export default function Sortable({ items, setItems }: {
 
     return (
         <div className='flex gap-4'>
-            <Dropdown>
-                <DropdownTrigger className='place-self-end'>
-                    <Button color='primary' variant='flat' size='lg' startContent={<PiPlusCircleDuotone />} isIconOnly></Button>
-                </DropdownTrigger>
-                <DropdownMenu>
-                    {(Object.keys(NAME_MAP) as DataType[]).map((key) => (
-                        <DropdownItem key={key} onPress={() => {
-                            setItems((items) => [...items, genDefaultValue(key)])
-                        }}>
-                            {NAME_MAP[key]}
-                        </DropdownItem>
-                    ))}
-                </DropdownMenu>
-            </Dropdown>
+            <div className='flex flex-col gap-4 place-self-end'>
+                <Download items={items} />
+                <Dropdown>
+                    <DropdownTrigger>
+                        <Button color='primary' variant='flat' size='lg' startContent={<PiPlusCircleDuotone />} isIconOnly></Button>
+                    </DropdownTrigger>
+                    <DropdownMenu>
+                        {(Object.keys(NAME_MAP) as DataType[]).map((key) => (
+                            <DropdownItem key={key} onPress={() => {
+                                setItems((items) => [...items, genDefaultValue(key)])
+                            }}>
+                                {NAME_MAP[key]}
+                            </DropdownItem>
+                        ))}
+                    </DropdownMenu>
+                </Dropdown>
+            </div>
             <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}

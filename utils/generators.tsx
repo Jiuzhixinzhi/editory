@@ -10,6 +10,138 @@ import parse, { type DOMNode } from 'html-react-parser'
 import { ElementType } from 'domelementtype'
 import type { Element, Text } from 'domhandler'
 
+export function checkIsFullPaper(data: Data[]) {
+    return data[0].type === 'listening'
+        && data[1].type === 'grammar'
+        && data[2].type === 'fishing'
+        && data[3].type === 'cloze'
+        && data[4].type === 'reading'
+        && data[5].type === 'reading'
+        && data[6].type === 'reading'
+        && data[7].type === '4/6'
+}
+
+export function generateWordExport(data: Data[]) {
+    return {
+        // 短对话 * 10
+        shortConversations: [{
+            no: 1,
+            a: 'He didn’t know it would be cold.',
+            b: 'He misunderstood the weather report.',
+            c: 'He didn’t have time to look for the coat.',
+            d: 'He forgot to bring the coat.',
+        }],
+        // 长对话A * 3
+        shortPassageA: [{
+            no: 11,
+            a: 'He didn’t know it would be cold.',
+            b: 'He misunderstood the weather report.',
+            c: 'He didn’t have time to look for the coat.',
+            d: 'He forgot to bring the coat.',
+        }],
+        // 长对话B * 3
+        shortPassageB: [{
+            no: 14,
+            a: 'He didn’t know it would be cold.',
+            b: 'He misunderstood the weather report.',
+            c: 'He didn’t have time to look for the coat.',
+            d: 'He forgot to bring the coat.',
+        }],
+        // 长对话C * 4
+        longConversationC: [{
+            no: 17,
+            a: 'He didn’t know it would be cold.',
+            b: 'He misunderstood the weather report.',
+            c: 'He didn’t have time to look for the coat.',
+            d: 'He forgot to bring the coat.',
+        }],
+        // 语法
+        grammarTitle: 'Grammar Title',
+        grammarText: 'Grammar Text',
+        // 钓鱼
+        vocabTitle: 'Vocab Title',
+        vocabText: 'Vocab Text',
+        vocabA: 'Option A',
+        vocabB: 'Option B',
+        vocabC: 'Option C',
+        vocabD: 'Option D',
+        vocabE: 'Option E',
+        vocabF: 'Option F',
+        vocabG: 'Option G',
+        vocabH: 'Option H',
+        vocabI: 'Option I',
+        vocabJ: 'Option J',
+        vocabK: 'Option K',
+        // 完型填空 * 15
+        clozeTitle: 'Cloze Title',
+        clozeText: 'Cloze Text',
+        clozeOptions: [{
+            no: 41,
+            a: 'Option A',
+            b: 'Option B',
+            c: 'Option C',
+            d: 'Option D',
+        }, {
+            no: 42,
+            a: 'Option A',
+            b: 'Option B',
+            c: 'Option C',
+            d: 'Option D',
+        }],
+        // 阅读理解A * n
+        readingAText: 'Reading A Text',
+        readingAQuestions: [{
+            no: 56,
+            q: 'What?',
+            a: 'Option A',
+            b: 'Option B',
+            c: 'Option C',
+            d: 'Option D',
+        }],
+        // 阅读理解B * n
+        readingBText: 'Reading B Text',
+        readingBQuestions: [{
+            no: 60,
+            q: 'What?',
+            a: 'Option A',
+            b: 'Option B',
+            c: 'Option C',
+            d: 'Option D',
+        }],
+        // 阅读理解C * n
+        readingCText: 'Reading C Text',
+        readingCQuestions: [{
+            no: 63,
+            q: 'What?',
+            a: 'Option A',
+            b: 'Option B',
+            c: 'Option C',
+            d: 'Option D',
+        }],
+        // 六选四 * 6
+        sentenceOptions: [{
+            marker: 'A',
+            text: 'Option A',
+        }, {
+            marker: 'B',
+            text: 'Option B',
+        }, {
+            marker: 'C',
+            text: 'Option C',
+        }, {
+            marker: 'D',
+            text: 'Option D',
+        }, {
+            marker: 'E',
+            text: 'Option E',
+        }, {
+            marker: 'F',
+            text: 'Option F',
+        }],
+        sentenceTitle: '4/6 Title',
+        sentenceText: '4/6 Text',
+    }
+}
 
 function generator_getter(data: Data, config: Config): () => Generator<Data> | null {
     switch (data.type) {

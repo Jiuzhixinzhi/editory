@@ -90,7 +90,10 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
               <span className='font-bold'>Select</span> to blank a word
             </p>
             <p className='text-sm text-default-800/50 text-balance'>
-              <span className='font-bold'>Print hotkey:</span> Ctrl + P
+              <span className='font-bold'>Generate PDF</span>: Press Ctrl + P
+            </p>
+            <p className='text-sm text-default-800/50 text-balance'>
+              <span className='font-bold'>Full papers</span> can be exported.
             </p>
             {
               id && (
@@ -106,6 +109,7 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
         </section>
 
         <div className='flex flex-col items-center gap-2 basis-6/12 pt-8'>
+
           <Sortable items={items} setItems={setItems} />
 
           <section className='w-full'>
