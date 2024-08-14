@@ -108,6 +108,8 @@ export type SentenceChoiceData = {
 
 模板：[`@/public/template.docx`](./public/template.docx)
 
+注：嵌入 HTML 是付费功能，似乎现在只能舍弃格式只取文本。应该新建一个 DOM 提取一下 `textContent` 就行。
+
 ```js
 {
     // 短对话 * 10

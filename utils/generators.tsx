@@ -11,7 +11,8 @@ import { ElementType } from 'domelementtype'
 import type { Element, Text } from 'domhandler'
 
 export function checkIsFullPaper(data: Data[]) {
-    return data[0].type === 'listening'
+    return data[7]
+        && data[0].type === 'listening'
         && data[1].type === 'grammar'
         && data[2].type === 'fishing'
         && data[3].type === 'cloze'

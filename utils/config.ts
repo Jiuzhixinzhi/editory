@@ -35,7 +35,7 @@ export const genDefaultValue = (type: DataType): Data => {
                 type: 'cloze',
                 distractors: {
                     record: ['accord', 'read', 'reap'],
-                    seemingly: ['likely', 'interestingly', 'hardly'],
+                    seemingly: ['likely', 'strangely', 'hardly'],
                     impress: ['intend', 'press', 'avoid'],
                     editing: ['writing', 'deleting', 'rendering'],
                     perspective: ['stance', 'spectacle', 'permanence'],

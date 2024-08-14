@@ -22,7 +22,7 @@ export default function Paper({ id, name, createNew }: { id: string; name: strin
             setIsLoading(false)
             setPaperName('')
         }} startContent={<PiFrameCornersDuotone />}>Create a full paper</Button>}
-        {createNew && <span className='font-mono text-sm opacity-50 ml-1 -mr-1'>Or</span>}
+        {createNew && <span className='font-mono text-sm opacity-60 ml-1 -mr-2'>Or</span>}
         <Button isIconOnly={!createNew} isLoading={isLoading} size='sm' variant='light' onPress={async () => {
             setIsEditing(!isEditing)
             if (isEditing) {
