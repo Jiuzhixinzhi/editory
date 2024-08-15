@@ -1,5 +1,5 @@
 import Data, { DataType } from './types'
-import { PiArticleDuotone, PiBookOpenTextLight, PiCheckerboardDuotone, PiFishDuotone, PiHeadphonesDuotone, PiScalesDuotone } from 'react-icons/pi'
+import { PiArticleDuotone, PiBookOpenTextDuotone, PiCheckerboardDuotone, PiFishDuotone, PiHeadphonesDuotone, PiScalesDuotone } from 'react-icons/pi'
 import { ReactNode } from 'react'
 
 export const ALPHABET_SET = [
@@ -24,7 +24,7 @@ export const ICON_MAP: Record<DataType, ReactNode> = {
     'grammar': <PiScalesDuotone />,
     'fishing': <PiFishDuotone />,
     'cloze': <PiCheckerboardDuotone />,
-    'reading': <PiBookOpenTextLight />,
+    'reading': <PiBookOpenTextDuotone />,
     '4/6': <PiArticleDuotone />,
 }
 

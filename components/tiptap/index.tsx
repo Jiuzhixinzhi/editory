@@ -56,6 +56,15 @@ const Tiptap = ({ unblank, blank, unblankable, ai, ...props }: UseEditorOptions 
     return ''
   }
 
+  const getSelectionText = () => {
+    if (editor) {
+      const { view, state } = editor
+      const { from, to } = view.state.selection
+      return state.doc.textBetween(from, to, ' ')
+    }
+    return ''
+  }
+
   return editor ? <div className='w-full'>
     <BubbleMenu editor={editor}>
       <ButtonGroup variant='light' className='bg-background border rounded-full overflow-clip'>
@@ -116,10 +125,10 @@ const Tiptap = ({ unblank, blank, unblankable, ai, ...props }: UseEditorOptions 
         {!unblankable && <Button
           onPress={() => {
             if (!editor.isActive('code') && blank) {
-              blank(getSelection())
+              blank(getSelectionText())
             }
             else if (editor.isActive('code') && unblank) {
-              unblank(getSelection())
+              unblank(getSelectionText())
             }
             editor.chain().focus().toggleCode().run()
           }}
@@ -129,7 +138,7 @@ const Tiptap = ({ unblank, blank, unblankable, ai, ...props }: UseEditorOptions 
         ></Button>}
         {blank && editor.isActive('code') && <Button
           onPress={() => {
-            blank(getSelection())
+            blank(getSelectionText())
           }}
           variant={editor.isActive('code') ? 'shadow' : 'light'}
           startContent={<PiOptionDuotone />}
