@@ -327,7 +327,7 @@ class ClozeGenerator extends Generator<ClozeData> {
             const optionsJSX = this.options[content].map((option, index) => (
                 <td key={content + "#" + option}>
                     <span className="paper-option-marker pr-2">{ALPHABET_SET[index]}.</span>
-                    <span className='paper-option-content'>{option}</span>
+                    <span className='paper-option-content break-all'>{option}</span>
                 </td>
             ))
             return (

@@ -8,6 +8,7 @@ import GrammarEditor from './grammar'
 import SentenceChoiceEditor from './sentence'
 import ReadingEditor from './reading'
 import ListeningEditor from './listening'
+import CustomTextEditor from './custom'
 
 export default function Editor({ items, setItems, id }: { items: Data[], setItems: Dispatch<SetStateAction<Data[]>>, id?: string }) {
     const setData = (data: Data) => setItems((prevItems) => prevItems.map((item) => item.id === data.id ? data : item))
@@ -57,6 +58,14 @@ export default function Editor({ items, setItems, id }: { items: Data[], setItem
 
                     case 'listening':
                         return <ListeningEditor
+                            key={data.id}
+                            data={data}
+                            setData={setData}
+                            id={id}
+                        />
+
+                    case 'custom':
+                        return <CustomTextEditor
                             key={data.id}
                             data={data}
                             setData={setData}

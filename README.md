@@ -1,10 +1,13 @@
 ## Editory
 
-> 填充[环境变量](./.env.example)后运行：
-> ```
-> npm install
-> npm run dev
-> ```
+> 以复杂数据结构自动化试卷与答案生成的英语测验制作工具。
+
+填充[环境变量](./.env.example)后运行：
+
+```
+npm install
+npm run dev
+```
 
 ### 核心架构
 
@@ -16,6 +19,7 @@
     - [x] `/sentence` — 六选四
     - [x] `/reading` — 阅读理解
     - [ ] `/listening` — 听力
+    - [ ] `custom` — 自定义文本块 
   - `/paper` — 试卷展示
   - `/key` — 答案展示
 - `/utils`
@@ -44,6 +48,17 @@ export type ListeningData = {
 }
 ```
 
+#### 语法填空
+
+```ts
+export type GrammarData = {
+    id: string
+    text: string
+    type: 'grammar'
+    hints: Record<string, string | undefined>
+}
+```
+
 #### 小猫钓鱼
 
 ```ts
@@ -69,17 +84,6 @@ export type ClozeData = {
 }
 ```
 
-#### 语法填空
-
-```ts
-export type GrammarData = {
-    id: string
-    text: string
-    type: 'grammar'
-    hints: Record<string, string | undefined>
-}
-```
-
 #### 阅读理解
 
 ```ts
@@ -101,6 +105,17 @@ export type SentenceChoiceData = {
     text: string
     type: '4/6'
     distractors: string[]
+}
+```
+
+#### 自定义文本块
+
+```ts
+export type CustomData = {
+    id: string
+    type: 'custom'
+    paper: string
+    key: string
 }
 ```
 
@@ -237,4 +252,4 @@ export type SentenceChoiceData = {
 - [ ] 导出 Word
 - [ ] 需限制挖空词**内部**不得带有格式
 - [ ] `Generator` 中的 `JSX key` 需要进行修改
-- [ ] 待 `es-toolkit` 发布修复后替换 `/utils/temp.ts`
+- [ ] key 排版优化

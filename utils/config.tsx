@@ -1,5 +1,5 @@
 import Data, { DataType } from './types'
-import { PiArticleDuotone, PiBookOpenTextDuotone, PiCheckerboardDuotone, PiFishDuotone, PiHeadphonesDuotone, PiScalesDuotone } from 'react-icons/pi'
+import { PiArticleDuotone, PiArticleNyTimesDuotone, PiBookOpenTextDuotone, PiCheckerboardDuotone, PiFishDuotone, PiHeadphonesDuotone, PiScalesDuotone } from 'react-icons/pi'
 import { ReactNode } from 'react'
 
 export const ALPHABET_SET = [
@@ -17,6 +17,7 @@ export const NAME_MAP: Record<DataType, string> = {
     'cloze': 'Cloze',
     'reading': 'Reading',
     '4/6': 'Sentence Choice',
+    'custom': 'Custom Text'
 }
 
 export const ICON_MAP: Record<DataType, ReactNode> = {
@@ -26,6 +27,7 @@ export const ICON_MAP: Record<DataType, ReactNode> = {
     'cloze': <PiCheckerboardDuotone />,
     'reading': <PiBookOpenTextDuotone />,
     '4/6': <PiArticleDuotone />,
+    'custom': <PiArticleNyTimesDuotone />
 }
 
 export const genDefaultValue = (type: DataType): Data => {
@@ -115,6 +117,14 @@ export const genDefaultValue = (type: DataType): Data => {
                     correct: 0,
                 }],
                 type: 'listening',
+            }
+
+        case 'custom':
+            return {
+                id: crypto.randomUUID(),
+                type: 'custom',
+                paper: '<h1>Final English Exam</h1>',
+                key: '<h1>Final English Exam (Key)</h1>',
             }
 
         default:

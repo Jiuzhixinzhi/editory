@@ -82,7 +82,7 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
             <p className='text-sm text-default-800/50 text-balance'>
               {
                 id
-                  ? <><span className='font-bold'>Auto-saved</span> every sec</>
+                  ? <><span className='font-bold'>Auto-saved</span> every second</>
                   : <><Link href='/' className='font-extrabold underline'>Sign in</Link> to sync to the cloud</>
               }
             </p>

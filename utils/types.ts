@@ -1,4 +1,4 @@
-type Data = FishingData | ClozeData | GrammarData | SentenceChoiceData | ReadingData | ListeningData
+type Data = FishingData | ClozeData | GrammarData | SentenceChoiceData | ReadingData | ListeningData | CustomData
 
 export type DataType = Data['type']
 
@@ -54,6 +54,13 @@ export type ListeningData = {
     id: string
     type: 'listening'
     questions: ListeningQuestion[]
+}
+
+export type CustomData = {
+    id: string
+    type: 'custom'
+    paper: string
+    key: string
 }
 
 export type Config = {
