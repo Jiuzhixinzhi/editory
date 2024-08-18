@@ -1,6 +1,11 @@
 ## Editory
 
 > 以复杂数据结构自动化试卷与答案生成的英语测验制作工具。
+> 
+> - 框架：`Next.js`
+> - 组件库：`NextUI`
+> - 数据库：`Xata`
+> - 用户管理：`Auth.js`
 
 填充[环境变量](./.env.example)后运行：
 
@@ -12,14 +17,15 @@ npm run dev
 ### 核心架构
 
 - `/components`
+  - `/editory` — 编辑界面
   - `/editor` — 编辑器
     - [x] `/fishing` — 小猫钓鱼题
     - [x] `/cloze` — 完形填空
     - [x] `/grammar` — 语法填空
     - [x] `/sentence` — 六选四
     - [x] `/reading` — 阅读理解
-    - [ ] `/listening` — 听力
-    - [ ] `custom` — 自定义文本块 
+    - [x] `/listening` — 听力
+    - [x] `/custom` — 自定义文本块 
   - `/paper` — 试卷展示
   - `/key` — 答案展示
 - `/utils`
@@ -123,10 +129,11 @@ export type CustomData = {
 
 模板：[`@/public/template.docx`](./public/template.docx)
 
-注：嵌入 HTML 是付费功能，似乎现在只能舍弃格式只取文本。应该新建一个 DOM 提取一下 `textContent` 就行。
+注：由于无法嵌入 HTML，需要净化 HTML 标签。
 
 ```js
 {
+    title: '上海地区 模拟试卷',
     // 短对话 * 10
     shortConversations: [{
         no: 1,
@@ -252,6 +259,5 @@ export type CustomData = {
 - [ ] 导出 Word
 - [ ] 需限制挖空词**内部**不得带有格式
 - [ ] `Generator` 中的 `JSX key` 需要进行修改
-- [ ] key 排版优化
 - [ ] 添加 `Generator` 中的类默认属性，定义一个方法实现
 - [ ] 添加听力的`4x1`、`2x2`、`1x4`排版模式

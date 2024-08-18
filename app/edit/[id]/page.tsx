@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     }
 }
 
-export default async function Editor({ params }: { params: { id: string } }) {
+export default async function EditingPage({ params }: { params: { id: string } }) {
     if (!await isLoggedIn()) {
         redirect('/')
     }

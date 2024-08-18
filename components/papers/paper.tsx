@@ -13,7 +13,7 @@ export default function Paper({ id, name, createNew }: { id: string; name: strin
     return <div className='flex items-center justify-between p-2 gap-3'>
         {
             isEditing
-                ? <Input size='sm' value={paperName} placeholder='Create new paper' variant='underlined' color='primary' onValueChange={setPaperName} className='flex-1' />
+                ? <Input size='sm' value={paperName} placeholder='Enter paper name' variant='underlined' color='primary' onValueChange={setPaperName} className='flex-1' />
                 : <Link href={`/edit/${id}`} className='flex-1' ><PiExamDuotone className='inline-block mr-2' />{paperName}</Link>
         }
         {createNew && <Button isLoading={isLoading} size='sm' variant='bordered' color='primary' onPress={async () => {

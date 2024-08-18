@@ -14,6 +14,7 @@ export default function Download({ items }: { items: Data[] }) {
     }
 
     function generateDocument() {
+        alert('Coming Soon...'); return
         loadFile(
             '/template.docx',
             function (error, content) {

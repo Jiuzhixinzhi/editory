@@ -11,15 +11,16 @@ import { ElementType } from 'domelementtype'
 import type { Element, Text } from 'domhandler'
 
 export function checkIsFullPaper(data: Data[]) {
-    return data[7]
-        && data[0].type === 'listening'
-        && data[1].type === 'grammar'
-        && data[2].type === 'fishing'
-        && data[3].type === 'cloze'
-        && data[4].type === 'reading'
+    return data[8]
+        && data[0].type === 'custom'
+        && data[1].type === 'listening'
+        && data[2].type === 'grammar'
+        && data[3].type === 'fishing'
+        && data[4].type === 'cloze'
         && data[5].type === 'reading'
         && data[6].type === 'reading'
-        && data[7].type === '4/6'
+        && data[7].type === 'reading'
+        && data[8].type === '4/6'
 }
 
 export function generateWordExport(data: Data[]) {
