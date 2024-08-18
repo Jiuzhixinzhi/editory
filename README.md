@@ -253,3 +253,5 @@ export type CustomData = {
 - [ ] 需限制挖空词**内部**不得带有格式
 - [ ] `Generator` 中的 `JSX key` 需要进行修改
 - [ ] key 排版优化
+- [ ] 添加 `Generator` 中的类默认属性，定义一个方法实现
+- [ ] 添加听力的`4x1`、`2x2`、`1x4`排版模式

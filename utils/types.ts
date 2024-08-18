@@ -66,7 +66,6 @@ export type CustomData = {
 export type Config = {
     /** @default 1 */
     start?: number,
-    /** @default 3 */
     countSpaces?: number,
 }
 

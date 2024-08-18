@@ -1,5 +1,5 @@
 import type Data from './types'
-import type { FishingData, ClozeData, GrammarData, SentenceChoiceData, ReadingData, Config } from './types'
+import type { FishingData, ClozeData, GrammarData, SentenceChoiceData, ReadingData, ListeningData, CustomData, Config } from './types'
 import { ALPHABET_SET, NAME_MAP } from './config'
 
 import type { JSX } from 'react'
@@ -156,6 +156,10 @@ function generator_getter(data: Data, config: Config): () => Generator<Data> | n
             return () => new SentenceChoiceGenerator(data, config)
         case 'reading':
             return () => new ReadingGenerator(data, config)
+        case 'listening':
+            return () => new ListeningGenerator(data, config)
+        case 'custom':
+            return () => new CustomGenerator(data, config)
         default:
             return () => null
     }
@@ -188,6 +192,11 @@ export function generateKey(data: Data[]) {
     })
 }
 
+interface GeneratorAttr {
+    defaultCountSpaces: number
+    displayName: boolean
+}
+
 abstract class Generator<T extends Data> {
     public paper: JSX.Element
     public key: JSX.Element
@@ -198,9 +207,10 @@ abstract class Generator<T extends Data> {
     protected start: number
 
     constructor(data: T, config?: Config) {
+        const attr = this.getGeneratorAttr()
         this.data = data
         this.start = config?.start ?? 1
-        this.spaces = new Array(config?.countSpaces ?? 3).fill('\u00A0').join('')
+        this.spaces = new Array(config?.countSpaces ?? attr.defaultCountSpaces).fill('\u00A0').join('')
         this.countQuestions = 0
         this.onBeforeWalk()
         // to prevent incorrect this context
@@ -214,9 +224,10 @@ abstract class Generator<T extends Data> {
             </section>
         )
         this.onAfterWalk()
+        const titleJSX = attr.displayName ? <h2 className='text-2xl font-bold'>{NAME_MAP[data.type]}</h2> : <></>
         this.paper = (
             <article key={this.data.id} className='flex flex-col my-4'>
-                <h2 className='text-2xl font-bold'>{NAME_MAP[data.type]}</h2>
+                {titleJSX}
                 {this.addPaper()}
             </article>
         )
@@ -238,6 +249,8 @@ abstract class Generator<T extends Data> {
         return <u>{this.spaces}{_number}{this.spaces}</u>
     }
 
+    public abstract getGeneratorAttr(): GeneratorAttr
+
     protected abstract onBeforeWalk(): void
 
     /** Since replacer is in object {replace: this.replacer}, which can cause incorrect this context. */
@@ -253,6 +266,13 @@ abstract class Generator<T extends Data> {
 class FishingGenerator extends Generator<FishingData> {
     private options: string[] = []
     private correctAnswers: string[] = []
+
+    public getGeneratorAttr(): GeneratorAttr {
+        return {
+            defaultCountSpaces: 3,
+            displayName: true,
+        }
+    }
 
     protected onBeforeWalk() {
         this.options = new Array()
@@ -302,6 +322,13 @@ class ClozeGenerator extends Generator<ClozeData> {
 
     protected onBeforeWalk() {
         this.options = {}
+    }
+
+    public getGeneratorAttr(): GeneratorAttr {
+        return {
+            defaultCountSpaces: 3,
+            displayName: true,
+        }
     }
 
     protected replacer(node: DOMNode): JSX.Element | undefined {
@@ -362,6 +389,13 @@ class ClozeGenerator extends Generator<ClozeData> {
 class GrammarGenerator extends Generator<GrammarData> {
     private keyContents: string[] = []
 
+    public getGeneratorAttr(): GeneratorAttr {
+        return {
+            defaultCountSpaces: 3,
+            displayName: true,
+        }
+    }
+
     protected onBeforeWalk() {
         this.keyContents = []
     }
@@ -401,6 +435,13 @@ class SentenceChoiceGenerator extends Generator<SentenceChoiceData> {
     private options: string[] = []
     private correctAnswers: string[] = []
 
+    public getGeneratorAttr(): GeneratorAttr {
+        return {
+            defaultCountSpaces: 8,
+            displayName: true,
+        }
+    }
+
     protected onBeforeWalk() {
         this.options = []
         this.correctAnswers = []
@@ -437,16 +478,24 @@ class SentenceChoiceGenerator extends Generator<SentenceChoiceData> {
 
     protected generateKey(): JSX.Element[] {
         const keyJSX = this.correctAnswers.map((correctAnswer, index) => (
-            <p key={correctAnswer}>
+            <span key={correctAnswer}>
                 <span className="paper-option-marker pr-2">{this.start + index}.</span>
                 <span className='paper-option-content'>{ALPHABET_SET[this.options.indexOf(correctAnswer)]}</span>
-            </p>
+            </span>
         ))
         return keyJSX
     }
 }
 
 class ReadingGenerator extends Generator<ReadingData> {
+
+    public getGeneratorAttr(): GeneratorAttr {
+        return {
+            defaultCountSpaces: 0,
+            displayName: true,
+        }
+    }
+
     protected onBeforeWalk() { }
 
     protected replacer(node: DOMNode): JSX.Element | undefined { return }
@@ -480,5 +529,80 @@ class ReadingGenerator extends Generator<ReadingData> {
             </span>
         ))
         return keyJSX
+    }
+}
+
+class ListeningGenerator extends Generator<ListeningData> {
+
+    public getGeneratorAttr(): GeneratorAttr {
+        return {
+            defaultCountSpaces: 0,
+            displayName: true,
+        }
+    }
+
+    protected onBeforeWalk() { }
+
+    protected replacer(node: DOMNode): JSX.Element | undefined { return }
+
+    protected onAfterWalk(): void { }
+
+    protected addPaper(): JSX.Element[] {
+        const questions = this.data.questions.map(question => {
+            this.countQuestions++
+            const options = question.a?.map((option, index) => (
+                <p key={option}><span>{ALPHABET_SET[index]}.</span> <span>{option}</span></p>
+            ))
+            return (
+                <div key={question.q}>
+                    <div>
+                        <p><span>{this.getNumber()}.</span> <span>{question.q}</span></p>
+                    </div>
+                    <div>
+                        {options}
+                    </div>
+                </div>
+            )
+        })
+        return [
+            <section key={questions.join('')}>{questions}</section>
+        ]
+    }
+
+    protected generateKey(): JSX.Element[] {
+        const keyJSX = this.data.questions.map((question, index) => (
+            <span key={question.q}>
+                <span className="paper-option-marker pr-2">{this.start + index}.</span>
+                <span className='paper-option-content'>{ALPHABET_SET[question.correct]}</span>
+            </span>
+        ))
+        return keyJSX
+    }
+}
+
+class CustomGenerator extends Generator<CustomData> {
+    public getGeneratorAttr(): GeneratorAttr {
+        return {
+            defaultCountSpaces: 0,
+            displayName: false,
+        }
+    }
+
+    protected onBeforeWalk() { }
+
+    protected replacer(node: DOMNode): JSX.Element | undefined { return }
+
+    protected onAfterWalk(): void { }
+
+    protected addPaper(): JSX.Element[] {
+        return [<section key={this.data.paper}>
+            {parse(this.data.paper)}
+        </section>]
+    }
+
+    protected generateKey(): JSX.Element[] {
+        return [<section key={this.data.paper}>
+            {parse(this.data.key)}
+        </section>]
     }
 }
