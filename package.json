@@ -27,7 +27,7 @@
     "docxtemplater": "^3.49.2",
     "domelementtype": "^2.3.0",
     "domhandler": "^5.0.3",
-    "es-toolkit": "^1.15.1",
+    "es-toolkit": "^1.16.0",
     "fast-shuffle": "^6.1.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^11.3.24",

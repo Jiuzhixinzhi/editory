@@ -4,8 +4,7 @@ import Tiptap from '../../tiptap'
 import { GrammarData } from '@/utils/types'
 import { useState } from 'react'
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react'
-import { omit } from 'es-toolkit'
-import { toMerged } from '@/utils/temp'
+import { omit, toMerged } from 'es-toolkit'
 
 export default function GrammarEditor({
     data,
