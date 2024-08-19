@@ -5,8 +5,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import icon from '@/app/icon.png'
 import { Button } from '@nextui-org/react'
-import { FcGoogle } from 'react-icons/fc'
 import cover from '@/app/opengraph-image.png'
+import { PiSignInDuotone } from 'react-icons/pi'
 
 export const metadata = {
     title: 'Reimagine the creation of ESL exam papers',
@@ -27,7 +27,7 @@ export default function ReimagineTheCreationOfESLExamPapers() {
             </div>
             <div className='flex justify-center gap-3'>
                 <Button variant='light' color='primary' href='/editor' as={Link} size='lg' className='rounded-full text-2xl'>Try it out</Button>
-                <Button variant='bordered' color='primary' href='/sign-in' as={Link} startContent={<FcGoogle />} size='lg' className='rounded-full text-2xl'>Get Started</Button>
+                <Button variant='bordered' color='primary' href='/sign-in' as={Link} startContent={<PiSignInDuotone />} size='lg' className='rounded-full text-2xl'>Get Started</Button>
             </div>
         </div>
     </Main>
