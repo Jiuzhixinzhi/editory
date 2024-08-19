@@ -5,7 +5,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import icon from '@/app/icon.png'
 import { Button } from '@nextui-org/react'
-import { signIn } from '@/auth'
 import { FcGoogle } from 'react-icons/fc'
 import cover from '@/app/opengraph-image.png'
 
@@ -26,13 +25,10 @@ export default function ReimagineTheCreationOfESLExamPapers() {
                 <span><Image src={icon} alt='Editory' width={64} height={64} className='rotate-12' /></span>
                 <span className={'text-6xl'}>ditory</span>
             </div>
-            <form className='flex justify-center gap-3' action={async () => {
-                'use server'
-                await signIn('google', { redirectTo: '/' })
-            }}>
+            <div className='flex justify-center gap-3'>
                 <Button variant='light' color='primary' href='/editor' as={Link} size='lg' className='rounded-full text-2xl'>Try it out</Button>
-                <Button variant='bordered' color='primary' type='submit' startContent={<FcGoogle />} size='lg' className='rounded-full text-2xl'>Get Started</Button>
-            </form>
+                <Button variant='bordered' color='primary' href='/sign-in' as={Link} startContent={<FcGoogle />} size='lg' className='rounded-full text-2xl'>Get Started</Button>
+            </div>
         </div>
     </Main>
 }

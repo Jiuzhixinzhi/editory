@@ -11,7 +11,7 @@ export default function Footer() {
     return <footer className={clsx(themeFont.className, 'flex justify-center items-center my-4 opacity-50')}>
         <ButtonGroup variant='flat' color='primary' radius='full'>
             <Button isIconOnly startContent={<PiGithubLogoDuotone />} href='https://github.com/Jiuzhixinzhi/editory' target='_blank' as={Link}></Button>
-            <Button startContent={<PiHeartDuotone />} endContent={<PiHeartDuotone />} className='font-bold' href='/reimagine-the-creation-of-esl-exam-papers' as={Link}>Software that Specialises</Button>
+            <Button className='font-bold' href='/reimagine-the-creation-of-esl-exam-papers' as={Link}>Made with <PiHeartDuotone /> for language</Button>
             <Button isIconOnly startContent={<PiMailboxDuotone />} href='mailto:hi@editory.xyz' as={Link}></Button>
         </ButtonGroup>
     </footer>

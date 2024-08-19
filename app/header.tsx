@@ -23,9 +23,7 @@ export default async function Header() {
                 {
                     isLoggedIn()
                         ? <UserButton />
-                        : <div>
-                            <Button isIconOnly variant='flat' className='rounded-full' color='primary' startContent={<PiSignInDuotone />} ></Button>
-                        </div>
+                        : <Button isIconOnly variant='flat' className='rounded-full' color='primary' startContent={<PiSignInDuotone />} href='/sign-in' as={Link}></Button>
                 }
             </div>
         </div>
