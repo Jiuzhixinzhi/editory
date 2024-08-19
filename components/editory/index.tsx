@@ -84,7 +84,7 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
                 id
                   ? <><span className='font-bold'>Auto-saved</span> every second</>
                   : <>
-                    Local changes might not be saved.
+                    Warning: Local changes might not be saved.<br />
                     <Link href='/' className='font-extrabold underline'>Sign in</Link> to sync to the cloud and draft with AI
                   </>
               }
