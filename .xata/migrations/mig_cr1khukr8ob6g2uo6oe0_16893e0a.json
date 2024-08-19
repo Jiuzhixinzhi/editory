@@ -1,0 +1,13 @@
+{
+  "id": "mig_cr1khukr8ob6g2uo6oe0",
+  "parentID": "mig_cr1kh2j362di1qqvs2a0",
+  "checksum": "1:16893e0adb0bc9a46466d5f5c29d19640d66598eb65aea100cae2d55a69951be",
+  "operations": [
+    {
+      "removeColumn": {
+        "column": "user",
+        "table": "papers"
+      }
+    }
+  ]
+}

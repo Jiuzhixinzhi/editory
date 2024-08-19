@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import { Providers } from './provider'
+import { Providers } from './providers'
 import Header from './header'
 import clsx from 'clsx'
 import getSubdomain from '@/utils/routing'

@@ -10,7 +10,7 @@ export default function NotFound({
     reset: () => void
 }) {
     return <Main isCentered>
-        <Denial message={<div className='flex flex-col space-y-3'>
+        <Denial message={<div className={'flex flex-col space-y-3'}>
             <p>
                 An error has occurred.
             </p>

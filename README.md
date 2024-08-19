@@ -5,9 +5,9 @@
 > - 框架：`Next.js`
 > - 组件库：`NextUI`
 > - 数据库：`Xata`
-> - 用户管理：`Auth.js`
+> - 用户管理：`Clerk`
 
-填充[环境变量](./.env.example)后运行：
+按照 [`@/schema.json`](./schema.json) 初始化 Xata 数据库并填充[环境变量](./.env.example)后运行：
 
 ```
 npm install

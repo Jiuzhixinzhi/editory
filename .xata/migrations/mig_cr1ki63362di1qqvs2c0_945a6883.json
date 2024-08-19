@@ -1,0 +1,18 @@
+{
+  "id": "mig_cr1ki63362di1qqvs2c0",
+  "parentID": "mig_cr1ki0b362di1qqvs2b0",
+  "checksum": "1:945a68830d1b754a1b32526f695bf6752e1a60e22db9f1bfda458369c7ff34d0",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "user",
+          "type": "text",
+          "notNull": true,
+          "defaultValue": ""
+        },
+        "table": "papers"
+      }
+    }
+  ]
+}

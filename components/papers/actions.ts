@@ -1,6 +1,6 @@
 'use server'
 
-import getUser, { authWrite } from '@/utils/auth'
+import getUserIdOrThrow, { authWrite } from '@/utils/auth'
 import { getXataClient } from '@/lib/xata'
 import { genDefaultValue } from '@/utils/config'
 import { revalidatePath } from 'next/cache'
@@ -13,17 +13,17 @@ export async function getPaper({ id }: { id: string }) {
 }
 
 export async function getPapers() {
-    const user = await getUser()
-    const papers = await xata.db.papers.select(['name']).filter({ user: user.id }).getAll()
+    const user = getUserIdOrThrow()
+    const papers = await xata.db.papers.select(['name']).filter({ user }).getAll()
     return papers
 }
 
 export async function createPaper({ id, name, full }: { id: string, name: string, full?: boolean }) {
-    const user = await getUser()
+    const user = getUserIdOrThrow()
     await xata.db.papers.create({
         id,
         name,
-        user: user.id,
+        user,
         data: full
             ? [genDefaultValue('listening'), genDefaultValue('grammar'), genDefaultValue('fishing'), genDefaultValue('cloze'), genDefaultValue('reading'), genDefaultValue('reading'), genDefaultValue('reading'), genDefaultValue('4/6')]
             : [genDefaultValue('custom')]

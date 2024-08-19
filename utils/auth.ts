@@ -1,25 +1,24 @@
-import { auth } from '@/auth'
+import { auth } from '@clerk/nextjs/server'
 import { getXataClient } from '../lib/xata'
 
 const xata = getXataClient()
 
-export async function isLoggedIn() {
-    const session = await auth()
-    return !!session?.user
+export function isLoggedIn() {
+    return auth().userId
 }
 
-export default async function getUser() {
-    const session = await auth()
-    if (!session?.user) {
+export default function getUserIdOrThrow() {
+    const { userId } = auth()
+    if (!userId) {
         throw new Error('Unauthorized')
     }
-    return session.user
+    return userId
 }
 
 export async function authWrite(paperId: string) {
-    const user = await getUser()
-    const paper = await xata.db.papers.select(['user.id']).filter({ id: paperId }).getFirstOrThrow()
-    if (paper.user!.id !== user.id) {
+    const userId = getUserIdOrThrow()
+    const paper = await xata.db.papers.select(['user']).filter({ id: paperId }).getFirstOrThrow()
+    if (paper.user !== userId) {
         throw new Error('Unauthorized')
     }
     return paper

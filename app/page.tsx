@@ -1,4 +1,3 @@
-import { auth, signIn } from '@/auth'
 import { AuroraBackground } from '@/components/aurora'
 import Main from '@/components/main'
 import Papers from '@/components/papers'
@@ -7,11 +6,12 @@ import { Button } from '@nextui-org/react'
 import clsx from 'clsx'
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { FcGoogle } from 'react-icons/fc'
 import craft from './craft.png'
 import generatePaper from './generate-paper.png'
 import generateKey from './generate-key.png'
 import Image from 'next/image'
+import { isLoggedIn } from '@/utils/auth'
+import { PiSignInDuotone } from 'react-icons/pi'
 
 export const metadata: Metadata = {
   title: 'ESL exam paper editing, reimagined | Editory',
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 }
 
 export default async function HomePage() {
-  if (await auth()) {
+  if (isLoggedIn()) {
     return <Main isCentered>
       <Papers />
     </Main>
@@ -54,13 +54,10 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <form className='flex justify-center gap-6' action={async () => {
-        'use server'
-        await signIn('google')
-      }}>
+      <div className='flex justify-center gap-6'>
         <Button variant='light' size='lg' color='primary' href='/editor' as={Link} className='rounded-full text-xl'>Try it out</Button>
-        <Button variant='bordered' size='lg' color='primary' type='submit' startContent={<FcGoogle />} className='rounded-full text-xl'>Get Started</Button>
-      </form>
+        <Button variant='bordered' size='lg' color='primary' href='/sign-in' as={Link} startContent={<PiSignInDuotone />} className='rounded-full text-xl'>Get Started</Button>
+      </div>
     </Main>
   </AuroraBackground>
 }

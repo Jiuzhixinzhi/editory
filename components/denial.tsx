@@ -1,3 +1,5 @@
+import { themeFont } from '@/utils/fonts'
+import clsx from 'clsx'
 import { ReactNode } from 'react'
 
 export default function Denial({ notFound, message }: {
@@ -5,7 +7,7 @@ export default function Denial({ notFound, message }: {
     message?: ReactNode
 }) {
     return (
-        <div className={'flex justify-center min-h-60 items-center border-default-900/10 bg-background/30 border-1 rounded-lg p-10 font-semibold text-2xl'}>
+        <div className={clsx('flex justify-center min-h-60 items-center border-default-900/10 bg-background/30 border-1 rounded-lg p-10 font-semibold text-2xl', themeFont.className)}>
             {
                 message
                 ?? (
