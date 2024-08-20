@@ -14,7 +14,6 @@ import { genDefaultValue } from '@/utils/config'
 import Main from '../main'
 import { updatePaper } from '../papers/actions'
 import Link from 'next/link'
-import clsx from 'clsx'
 import { themeFont } from '@/utils/fonts'
 
 export default function Editory({ data, id }: { data: Data[] | null, id?: string }) {
@@ -36,7 +35,7 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
 
   return (
     <Main isCentered>
-      <div className='gap-2 flex-col md:flex-row flex w-full'>
+      <div className='gap-4 flex-col md:flex-row flex w-full'>
         <section className='flex basis-7/12'>
           <div className='flex flex-col gap-2 p-4 text-end w-min'>
             <h2 className='font-bold text-4xl text-primary-300 mt-8'>Editor</h2>
