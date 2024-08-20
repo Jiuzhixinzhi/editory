@@ -36,82 +36,73 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
 
   return (
     <Main isCentered>
-      <div className={clsx('flex flex-col gap-2 text-center text-balance md:hidden', themeFont.className)}>
-        <h2 className='font-bold text-5xl text-primary-300'>Sorry <PiSmileySadDuotone className='inline-block' /></h2>
-        <p className='text-primary-400/70 text-2xl'>
-          Our editor is designed for desktop.<br></br>
-          We hope you&apos;d never have to edit a paper on mobile.
-        </p>
-      </div>
+      <div className='gap-2 flex-col md:flex-row flex w-full'>
+        <section className='flex basis-7/12'>
+          <div className='flex flex-col gap-2 p-4 text-end w-min'>
+            <h2 className='font-bold text-4xl text-primary-300 mt-8'>Editor</h2>
 
-      <div className='hidden gap-4 md:flex w-full'>
-        <div className='flex flex-col gap-2 p-4 text-end basis-1/12'>
-          <h2 className='font-bold text-4xl text-primary-300 mt-8'>Editor</h2>
-
-          <div className='flex flex-col gap-2 text-sm text-primary-400/70'>
-            <div className='flex items-center gap-2'>
-              <div>
-                <PiSealQuestionDuotone />
+            <div className='flex flex-col gap-2 text-sm text-primary-400/70'>
+              <div className='flex items-center gap-2'>
+                <div>
+                  <PiSealQuestionDuotone />
+                </div>
+                <hr className='flex-1 border-t-primary-400/70 border-t-1' />
+                <div>
+                  blanking
+                </div>
               </div>
-              <hr className='flex-1 border-t-primary-400/70 border-t-1' />
-              <div>
-                blanking
+              <div className='flex items-center gap-2'>
+                <div>
+                  <PiOptionDuotone />
+                </div>
+                <hr className='flex-1 border-t-primary-400/70 border-t-1' />
+                <div>
+                  options
+                </div>
+              </div>
+              <div className='flex items-center gap-2'>
+                <div>
+                  <PiMagicWandDuotone />
+                </div>
+                <hr className='flex-1 border-t-primary-400/70 border-t-1' />
+                <div>
+                  AI draft
+                </div>
               </div>
             </div>
-            <div className='flex items-center gap-2'>
-              <div>
-                <PiOptionDuotone />
-              </div>
-              <hr className='flex-1 border-t-primary-400/70 border-t-1' />
-              <div>
-                options
-              </div>
-            </div>
-            <div className='flex items-center gap-2'>
-              <div>
-                <PiMagicWandDuotone />
-              </div>
-              <hr className='flex-1 border-t-primary-400/70 border-t-1' />
-              <div>
-                AI draft
-              </div>
-            </div>
-          </div>
 
-          <div className='flex flex-col gap-2'>
-            <p className='text-sm text-default-800/50 text-balance'>
+            <div className='flex flex-col gap-2'>
+              <p className='text-sm text-default-800/50 text-balance'>
+                {
+                  id
+                    ? <><span className='font-bold'>Auto-saved</span> every second</>
+                    : <>
+                      <Link href='/' className='font-extrabold underline'>Sign in</Link> to sync to the cloud                    </>
+                }
+              </p>
+              <p className='text-sm text-default-800/50 text-balance'>
+                <span className='font-bold'>Select</span> to blank a word
+              </p>
+              <p className='text-sm text-default-800/50 text-balance'>
+                <span className='font-bold'>Generate PDF</span>: Press Ctrl + P
+              </p>
+              <p className='text-sm text-default-800/50 text-balance'>
+                <span className='font-bold'>Full papers</span> can be exported
+              </p>
               {
-                id
-                  ? <><span className='font-bold'>Auto-saved</span> every second</>
-                  : <>
-                    Warning: Local changes might not be saved.<br />
-                    <Link href='/' className='font-extrabold underline'>Sign in</Link> to sync to the cloud and draft with AI
-                  </>
+                id && (
+                  <p className='text-sm text-default-800/50 text-balance'>
+                    <span className='font-bold'>Share a draft</span> via paper link
+                  </p>
+                )
               }
-            </p>
-            <p className='text-sm text-default-800/50 text-balance'>
-              <span className='font-bold'>Select</span> to blank a word
-            </p>
-            <p className='text-sm text-default-800/50 text-balance'>
-              <span className='font-bold'>Generate PDF</span>: Press Ctrl + P
-            </p>
-            <p className='text-sm text-default-800/50 text-balance'>
-              <span className='font-bold'>Full papers</span> can be exported
-            </p>
-            {
-              id && (
-                <p className='text-sm text-default-800/50 text-balance'>
-                  <span className='font-bold'>Share a draft</span> via paper link
-                </p>
-              )
-            }
+            </div>
           </div>
-        </div>
-        <section className='flex flex-col basis-5/12'>
+
           <Editor items={items} setItems={setItems} id={id} />
         </section>
 
-        <div className='flex flex-col items-center gap-2 basis-6/12 pt-8'>
+        <div className='flex flex-col items-center gap-2 basis-5/12 pt-8'>
 
           <Sortable items={items} setItems={setItems} />
 

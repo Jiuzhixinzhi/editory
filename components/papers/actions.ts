@@ -25,7 +25,7 @@ export async function createPaper({ id, name, full }: { id: string, name: string
         name,
         user,
         data: full
-            ? [genDefaultValue('listening'), genDefaultValue('grammar'), genDefaultValue('fishing'), genDefaultValue('cloze'), genDefaultValue('reading'), genDefaultValue('reading'), genDefaultValue('reading'), genDefaultValue('4/6')]
+            ? [genDefaultValue('custom'), genDefaultValue('listening'), genDefaultValue('grammar'), genDefaultValue('fishing'), genDefaultValue('cloze'), genDefaultValue('reading'), genDefaultValue('reading'), genDefaultValue('reading'), genDefaultValue('4/6')]
             : [genDefaultValue('custom')]
     })
     revalidatePath('/')

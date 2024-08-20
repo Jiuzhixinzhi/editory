@@ -12,7 +12,7 @@ import CustomTextEditor from './custom'
 
 export default function Editor({ items, setItems, id }: { items: Data[], setItems: Dispatch<SetStateAction<Data[]>>, id?: string }) {
     const setData = (data: Data) => setItems((prevItems) => prevItems.map((item) => item.id === data.id ? data : item))
-    return <div className='border-default-500/20 min-h-[calc(88vh)] border before:prose-code:content-["["] max-w-[40vw] after:prose-code:content-["]"] p-4 rounded'>
+    return <div className='border-default-500/20 min-h-[calc(88vh)] border before:prose-code:content-["["] max-w-[calc(100vw-160px)] md:max-w-[45vw] after:prose-code:content-["]"] p-4 rounded'>
         {
             items.map((data) => {
                 switch (data.type) {
