@@ -44,7 +44,7 @@ export default function FishingEditor({
                 })
             }}
         />
-        <div className={clsx('text-secondary text-center text-lg -my-4 animate-bounce', themeFont.className)}>
+        <div className={clsx('text-secondary text-center text-lg -mb-4 -mt-2 animate-bounce', themeFont.className)}>
            <PiCursorTextDuotone className='inline' /> Try Select Any Word <PiArrowBendRightUpDuotone className='inline' />
         </div>
     </div>

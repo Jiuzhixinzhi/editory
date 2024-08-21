@@ -24,28 +24,29 @@ export default async function HomePage() {
     </Main>
   }
   return <AuroraBackground>
-    <Main isCentered className={'flex flex-col gap-6 opacity-80'}>
-      <h1 className={clsx(themeFont.className, 'text-7xl font-bold text-center text-balance mt-20 text-primary')}>
-        ESL exam paper editing,
-        reimagined.
+    <Main isCentered className={'flex flex-col gap-8 opacity-80'}>
+      <h1 className={clsx(themeFont.className, 'font-bold text-center text-balance mt-20 text-primary')}>
+        <span className='text-5xl'>ESL exam paper editing,</span>
+        <br />
+        <span className='text-7xl'>reimagined.</span>
       </h1>
 
-      <section className='flex flex-col gap-6 w-full px-12 py-5'>
-        <h2 className={clsx(themeFont.className, 'text-4xl text-center')}>You craft what matters. We handle the formalities.</h2>
+      <section className='flex flex-col gap-6 w-full px-12'>
+        <h2 className={clsx(themeFont.className, 'text-4xl text-center text-balance')}>You craft what matters. We handle the formalities.</h2>
         <BlankShowcase />
       </section>
 
-      <section className='flex flex-col gap-6 w-full px-12 py-5'>
-        <h2 className={clsx(themeFont.className, 'text-4xl text-center')}>Let AI help you create an initial draft.</h2>
+      <section className='flex flex-col gap-6 w-full px-12'>
+        <h2 className={clsx(themeFont.className, 'text-4xl text-center text-balance')}>Let AI help you create an initial draft.</h2>
         <AiShowcase />
       </section>
 
-      <div className={clsx(themeFont.className, 'flex justify-center gap-6')}>
+      <div className={clsx(themeFont.className, 'flex justify-center gap-6 -mt-12 mb-6 sm:mt-0 sm:mb-0')}>
         <Button variant='light' size='lg' color='primary' href='/editor' as={Link} className='rounded-full text-xl'>Try it out</Button>
         <Button variant='solid' size='lg' color='primary' href='/sign-in' as={Link} startContent={<PiSignInDuotone />} className='rounded-full text-xl'>Get Started</Button>
       </div>
 
-      <section className='w-full px-12 py-5'>
+      <section className='w-full px-12'>
         <Features />
       </section>
     </Main>

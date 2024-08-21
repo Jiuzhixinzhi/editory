@@ -42,57 +42,60 @@ const Tiptap = ({ unblank, blank, unblankable, ai, ...props }: UseEditorOptions 
         return ''
     }
 
-    return editor ? <div className='w-full'>
-        <BubbleMenu editor={editor}>
-            <ButtonGroup color='primary' className='bg-background border rounded-full overflow-clip'>
-                {!unblankable && <Button
+    return editor
+        ? <div className='w-full'>
+            <BubbleMenu editor={editor}>
+                <ButtonGroup color='primary' className='bg-background border rounded-full overflow-clip'>
+                    {!unblankable && <Button
+                        onPress={() => {
+                            if (!editor.isActive('code') && blank) {
+                                blank(getSelectionText())
+                            }
+                            else if (editor.isActive('code') && unblank) {
+                                unblank(getSelectionText())
+                            }
+                            editor.chain().focus().toggleCode().run()
+                        }}
+                        variant={editor.isActive('code') ? 'shadow' : 'light'}
+                        startContent={<PiSealQuestionDuotone />}
+                        isIconOnly
+                    ></Button>}
+                    {ai && <Button
+                        onPress={async () => {
+                            ai()
+                        }}
+                        variant='light'
+                        startContent={<PiMagicWandDuotone />}
+                        isIconOnly
+                    ></Button>}
+                </ButtonGroup>
+            </BubbleMenu>
+            <EditorContent editor={editor} />
+            {ai && <div className='w-full flex justify-center'>
+                <Button
                     onPress={() => {
-                        if (!editor.isActive('code') && blank) {
-                            blank(getSelectionText())
-                        }
-                        else if (editor.isActive('code') && unblank) {
-                            unblank(getSelectionText())
-                        }
-                        editor.chain().focus().toggleCode().run()
+                        editor.chain().focus().selectAll().run()
                     }}
-                    variant={editor.isActive('code') ? 'shadow' : 'light'}
-                    startContent={<PiSealQuestionDuotone />}
-                    isIconOnly
-                ></Button>}
-                {ai && <Button
-                    onPress={async () => {
-                        ai()
-                    }}
+                    className={clsx(themeFont.className, 'text-lg -mb-4 animate-bounce')}
                     variant='light'
-                    startContent={<PiMagicWandDuotone />}
-                    isIconOnly
-                ></Button>}
-            </ButtonGroup>
-        </BubbleMenu>
-        <EditorContent editor={editor} />
-        {ai && <Button
-            onPress={() => {
-                editor.chain().focus().selectAll().run()
-            }}
-            className={clsx(themeFont.className, 'text-lg -my-2 animate-bounce')}
-            variant='light'
-            fullWidth
-            color='secondary'
-            startContent={<PiSelectionAllDuotone />}
-            endContent={<PiCursorClickDuotone />}
-        >Select All</Button>}
-    </div> : <div className='w-full'>
-        <div className={className} dangerouslySetInnerHTML={{ __html: props.content as string }} />
-        {ai && <Button
-            className={clsx(themeFont.className, 'text-lg -my-2 animate-bounce')}
-            variant='light'
-            fullWidth
-            color='secondary'
-            startContent={<PiSelectionAllDuotone />}
-            endContent={<PiCursorClickDuotone />}
-        >Select All</Button>}
-    </div>
+                    color='secondary'
+                    startContent={<PiSelectionAllDuotone />}
+                    endContent={<PiCursorClickDuotone />}
+                >Select All</Button>
+            </div>}
+        </div>
+        : <div className='w-full'>
+            <div className={className} dangerouslySetInnerHTML={{ __html: props.content as string }} />
+            {ai && <div className='w-full flex justify-center'>
+                <Button
+                    className={clsx(themeFont.className, 'text-lg -mb-4 animate-bounce')}
+                    variant='light'
+                    color='secondary'
+                    startContent={<PiSelectionAllDuotone />}
+                    endContent={<PiCursorClickDuotone />}
+                >Select All</Button>
+            </div>}
+        </div>
 }
-
 
 export default Tiptap
