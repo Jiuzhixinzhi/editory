@@ -36,7 +36,7 @@ export default async function HomePage() {
         <BlankShowcase />
       </section>
 
-      <section className='flex flex-col gap-6 w-full px-12'>
+      <section className='flex flex-col -mt-8 sm:mt-0 gap-6 w-full px-12'>
         <h2 className={clsx(themeFont.className, 'text-4xl text-center text-balance')}>Let AI help you create an initial draft.</h2>
         <AiShowcase />
       </section>
