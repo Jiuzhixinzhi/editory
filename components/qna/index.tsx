@@ -3,7 +3,7 @@ import { Button, Input, Textarea } from '@nextui-org/react'
 import { toFilled } from 'es-toolkit'
 import { PiCheckDuotone, PiPlusDuotone, PiTrashDuotone } from 'react-icons/pi'
 
-export default function QnA<T extends ListeningQuestion | ReadingQuestion>({ questions, setQuestions }: { questions: T[], setQuestions: (questions: T[]) => void }) {
+export default function QnA<T extends ListeningQuestion | ReadingQuestion>({ questions, setQuestions, hasTranscript = false }: { questions: T[], setQuestions: (questions: T[]) => void, hasTranscript?: boolean }) {
     return <div className='flex flex-col gap-6'>
         {
             questions.map(({ q, a, correct }, index) => <div key={index} className='flex flex-col gap-2'>
@@ -31,7 +31,7 @@ export default function QnA<T extends ListeningQuestion | ReadingQuestion>({ que
             </div>)
         }
         <Button color='primary' variant='flat' fullWidth onPress={() => {
-            setQuestions([...questions, { q: '', a: ['', '', '', ''], correct: 0, transcript: '' } as T])
+            setQuestions([...questions, { q: '', a: ['', '', '', ''], correct: 0, ...(hasTranscript ? { transcript: '' } : {}) } as T])
         }} startContent={<PiPlusDuotone />}>Add a question</Button>
     </div>
 }

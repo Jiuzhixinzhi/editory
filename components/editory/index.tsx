@@ -14,7 +14,6 @@ import { genDefaultValue } from '@/utils/config'
 import Main from '../main'
 import { updatePaper } from '../papers/actions'
 import Link from 'next/link'
-import { themeFont } from '@/utils/fonts'
 
 export default function Editory({ data, id }: { data: Data[] | null, id?: string }) {
   const [items, setItems] = useState<Data[]>(data ?? [genDefaultValue('grammar'), genDefaultValue('fishing'), genDefaultValue('cloze')])
@@ -120,7 +119,7 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
               <Button isIconOnly startContent={<PiArrowSquareOutDuotone />} className='text-xl rounded-full' variant='light' target='_blank' href={id ? `https://${id}.editory.xyz/key` : '/key'} as={Link}></Button>
               <h2 className='font-bold text-4xl py-8'>Key</h2>
             </div>
-            <div className='border-default-500/20 border-1 rounded'>
+            <div className='border-default-500/20 border-1 rounded bg-background/30'>
               <Key data={items} />
             </div>
           </section>

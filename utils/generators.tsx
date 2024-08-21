@@ -507,7 +507,7 @@ class ReadingGenerator extends Generator<ReadingData> {
         const questions = this.data.questions.map(question => {
             this.countQuestions++
             const options = question.a?.map((option, index) => (
-                <p key={option}><span>{ALPHABET_SET[index]}.</span> <span>{option}</span></p>
+                <p key={index}><span>{ALPHABET_SET[index]}.</span> <span>{option}</span></p>
             ))
             return (
                 <div key={question.q}>
