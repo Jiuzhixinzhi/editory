@@ -65,6 +65,18 @@ const Tiptap = ({ unblank, blank, unblankable, ai, ...props }: UseEditorOptions 
     return ''
   }
 
+  // for the strange selection behavior on Windows
+  const trimSelection = () => {
+    if (editor) {
+        const { view } = editor
+        const { from, to } = view.state.selection
+        const selection = getSelectionText()
+        if (selection.endsWith(' ')) {
+            editor.chain().focus().setTextSelection({ from, to: to - 1 }).run()
+        }
+    }
+}
+
   return editor ? <div className='w-full'>
     <BubbleMenu editor={editor}>
       <ButtonGroup variant='light' className='bg-background border rounded-full overflow-clip'>
@@ -124,6 +136,7 @@ const Tiptap = ({ unblank, blank, unblankable, ai, ...props }: UseEditorOptions 
         ></Button>
         {!unblankable && <Button
           onPress={() => {
+            trimSelection()
             if (!editor.isActive('code') && blank) {
               blank(getSelectionText())
             }
@@ -138,6 +151,7 @@ const Tiptap = ({ unblank, blank, unblankable, ai, ...props }: UseEditorOptions 
         ></Button>}
         {blank && editor.isActive('code') && <Button
           onPress={() => {
+            trimSelection()
             blank(getSelectionText())
           }}
           variant={editor.isActive('code') ? 'shadow' : 'light'}

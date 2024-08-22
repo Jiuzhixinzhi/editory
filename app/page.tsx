@@ -11,6 +11,7 @@ import { PiSignInDuotone } from 'react-icons/pi'
 import BlankShowcase from '../components/mock/blank'
 import AiShowcase from '@/components/mock/ai'
 import Features from './features'
+import { TracingBeam } from '@/components/beam'
 
 export const metadata: Metadata = {
   title: 'ESL exam paper editing, reimagined | Editory',
@@ -24,31 +25,33 @@ export default async function HomePage() {
     </Main>
   }
   return <AuroraBackground>
-    <Main isCentered className={'flex flex-col gap-8 opacity-80'}>
-      <h1 className={clsx(themeFont.className, 'font-bold text-center text-balance mt-20 text-primary')}>
-        <span className='text-5xl'>ESL exam paper editing,</span>
-        <br />
-        <span className='text-7xl'>reimagined.</span>
-      </h1>
+    <TracingBeam>
+      <Main isCentered className={'flex flex-col gap-8 opacity-80'}>
+        <h1 className={clsx(themeFont.className, 'text-center text-balance mt-20 text-primary')}>
+          <span className='text-5xl'>ESL exam paper editing,</span>
+          <br />
+          <span className='font-bold text-8xl'>reimagined.</span>
+        </h1>
 
-      <section className='flex flex-col gap-6 w-full px-12'>
-        <h2 className={clsx(themeFont.className, 'text-4xl text-center text-balance')}>You craft what matters. We handle the formalities.</h2>
-        <BlankShowcase />
-      </section>
+        <section className='flex flex-col gap-6 w-full px-12'>
+          <h2 className={clsx(themeFont.className, 'text-4xl text-center text-balance')}>You craft what matters. We handle the formalities.</h2>
+          <BlankShowcase />
+        </section>
 
-      <section className='flex flex-col -mt-8 sm:mt-0 gap-6 w-full px-12'>
-        <h2 className={clsx(themeFont.className, 'text-4xl text-center text-balance')}>Let AI help you create an initial draft.</h2>
-        <AiShowcase />
-      </section>
+        <section className='flex flex-col gap-6 w-full px-12 -mt-8 sm:mt-0'>
+          <h2 className={clsx(themeFont.className, 'text-4xl text-center text-balance')}>Let AI help you create an initial draft.</h2>
+          <AiShowcase />
+        </section>
 
-      <div className={clsx(themeFont.className, 'flex justify-center gap-6 -mt-12 mb-6 sm:mt-0 sm:mb-0')}>
-        <Button variant='light' size='lg' color='primary' href='/editor' as={Link} className='rounded-full text-xl'>Try it out</Button>
-        <Button variant='solid' size='lg' color='primary' href='/sign-in' as={Link} startContent={<PiSignInDuotone />} className='rounded-full text-xl'>Get Started</Button>
-      </div>
+        <div className={clsx(themeFont.className, 'flex justify-center gap-6 -mt-12 mb-6 sm:mt-0 sm:mb-0')}>
+          <Button variant='light' size='lg' color='primary' href='/editor' as={Link} className='rounded-full text-xl'>Try it out</Button>
+          <Button variant='solid' size='lg' color='primary' href='/sign-in' as={Link} startContent={<PiSignInDuotone />} className='rounded-full text-xl'>Get Started</Button>
+        </div>
 
-      <section className='w-full px-12'>
-        <Features />
-      </section>
-    </Main>
+        <section className='w-full px-12'>
+          <Features />
+        </section>
+      </Main>
+    </TracingBeam>
   </AuroraBackground>
 }

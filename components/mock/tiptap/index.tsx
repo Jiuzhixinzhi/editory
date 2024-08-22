@@ -11,9 +11,7 @@ import clsx from 'clsx'
 
 const className = 'focus:outline-none prose prose-code:underline prose-code:underline-offset-4 prose-code:text-primary/40 prose-blockquote:my-3 prose-h1:my-3 prose-h1:text-2xl prose-h2:my-2.5 prose-h2:text-xl prose-h3:my-2 prose-h3:text-lg prose-p:my-2 prose-ul:my-1 prose-li:my-0 prose-img:my-4 dark:prose-invert'
 
-const Tiptap = ({ unblank, blank, unblankable, ai, ...props }: UseEditorOptions & {
-    blank?: (selection: string) => void,
-    unblank?: (selection: string) => void,
+const Tiptap = ({ unblankable, ai, ...props }: UseEditorOptions & {
     unblankable?: boolean,
     ai?: () => void
 }) => {
@@ -33,11 +31,23 @@ const Tiptap = ({ unblank, blank, unblankable, ai, ...props }: UseEditorOptions 
         ...props
     })
 
+    const trimSelection = () => {
+        if (editor) {
+            const { view } = editor
+            const { from, to } = view.state.selection
+            const selection = getSelectionText()
+            if (selection.endsWith(' ')) {
+                editor.chain().focus().setTextSelection({ from, to: to - 1 }).run()
+            }
+        }
+    }
+
     const getSelectionText = () => {
         if (editor) {
             const { view, state } = editor
             const { from, to } = view.state.selection
-            return state.doc.textBetween(from, to, ' ')
+            const selection = state.doc.textBetween(from, to, ' ')
+            return selection
         }
         return ''
     }
@@ -48,12 +58,7 @@ const Tiptap = ({ unblank, blank, unblankable, ai, ...props }: UseEditorOptions 
                 <ButtonGroup color='primary' className='bg-background border rounded-full overflow-clip'>
                     {!unblankable && <Button
                         onPress={() => {
-                            if (!editor.isActive('code') && blank) {
-                                blank(getSelectionText())
-                            }
-                            else if (editor.isActive('code') && unblank) {
-                                unblank(getSelectionText())
-                            }
+                            trimSelection()
                             editor.chain().focus().toggleCode().run()
                         }}
                         variant={editor.isActive('code') ? 'shadow' : 'light'}
