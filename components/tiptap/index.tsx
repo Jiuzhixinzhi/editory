@@ -181,5 +181,4 @@ const Tiptap = ({ unblank, blank, unblankable, ai, ...props }: UseEditorOptions 
   </div> : <div className={className} dangerouslySetInnerHTML={{ __html: props.content as string }} />
 }
 
-
 export default Tiptap

@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import Cookies from 'js-cookie'
 import { Button } from '@nextui-org/react'
-import { PiArrowSquareOutDuotone, PiSealQuestionDuotone, PiOptionDuotone, PiMagicWandDuotone, PiSmileySadDuotone } from 'react-icons/pi'
+import { PiArrowSquareOutDuotone, PiSealQuestionDuotone, PiOptionDuotone, PiMagicWandDuotone } from 'react-icons/pi'
 import { genDefaultValue } from '@/utils/config'
 import Main from '../main'
 import { updatePaper } from '../papers/actions'
@@ -75,18 +75,21 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
                   id
                     ? <><span className='font-bold'>Auto-saved</span> every second</>
                     : <>
-                      <Link href='/' className='font-extrabold underline'>Sign in</Link> to sync to the cloud                    </>
+                      <Link href='/' className='font-extrabold underline'>Sign in</Link> to sync to the cloud
+                    </>
                 }
               </p>
               <p className='text-sm text-default-800/50 text-balance'>
-                <span className='font-bold'>Select</span> to blank a word
+                <span className='font-bold'>Select a word</span> to blank it
               </p>
               <p className='text-sm text-default-800/50 text-balance'>
-                <span className='font-bold'>Generate PDF</span>: Press Ctrl + P
+                <span className='font-bold'>Generate PDF</span> by Ctrl + P
               </p>
-              <p className='text-sm text-default-800/50 text-balance'>
-                <span className='font-bold'>Full papers</span> can be exported
-              </p>
+              {id ? <p className='text-sm text-default-800/50 text-balance'>
+                <span className='font-bold'>Full papers</span> exportable
+              </p> : <p className='text-sm text-default-800/50 text-balance'>
+                <span className='font-bold'>Exportable</span> upon sign-in
+              </p>}
               {
                 id && (
                   <p className='text-sm text-default-800/50 text-balance'>
@@ -106,7 +109,7 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
 
           <section className='w-full'>
             <div className='flex items-center'>
-              <Button isIconOnly startContent={<PiArrowSquareOutDuotone />} className='text-xl rounded-full' variant='light' target='_blank' href={id ? `https://${id}.editory.xyz/paper` : '/paper'} as={Link}></Button>
+              {id && <Button isIconOnly startContent={<PiArrowSquareOutDuotone />} className='text-xl rounded-full' variant='light' target='_blank' href={id ? `https://${id}.editory.xyz/paper` : '/paper'} as={Link}></Button>}
               <h2 className='font-bold text-4xl py-8'>Paper</h2>
             </div>
             <div className='border-primary-400/20 border-4 rounded bg-primary-50/20'>
@@ -116,7 +119,7 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
 
           <section className='w-full'>
             <div className='flex items-center'>
-              <Button isIconOnly startContent={<PiArrowSquareOutDuotone />} className='text-xl rounded-full' variant='light' target='_blank' href={id ? `https://${id}.editory.xyz/key` : '/key'} as={Link}></Button>
+              {id && <Button isIconOnly startContent={<PiArrowSquareOutDuotone />} className='text-xl rounded-full' variant='light' target='_blank' href={id ? `https://${id}.editory.xyz/key` : '/key'} as={Link}></Button>}
               <h2 className='font-bold text-4xl py-8'>Key</h2>
             </div>
             <div className='border-default-500/20 border-1 rounded bg-background/30'>
