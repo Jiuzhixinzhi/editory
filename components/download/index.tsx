@@ -1,41 +1,35 @@
 'use client'
 
-import Docxtemplater from 'docxtemplater'
 import PizZip from 'pizzip'
 import { saveAs } from 'file-saver'
 import Data from '@/utils/types'
 import { Button } from '@nextui-org/react'
 import { PiMicrosoftWordLogoDuotone } from 'react-icons/pi'
-import { checkIsFullPaper, generateWordExport } from '@/utils/generators'
+import { generateDocx } from '@/utils/generators'
 
-export default function Download({ items }: { items: Data[] }) {
+export default function Download({ items, type }: { items: Data[], type: 'paper' | 'key' }) {
     async function loadFile(url: string, callback: (error: Error | null, content: PizZip.LoadData) => void) {
         (await import('pizzip/utils/index.js')).default.getBinaryContent(url, callback)
     }
 
-    function generateDocument() {
-        alert('Coming Soon...'); return
+    async function generateDocument() {
+        const doc = await generateDocx(items, type)
         loadFile(
             '/template.docx',
             function (error, content) {
                 if (error) {
                     throw error
                 }
-                const zip = new PizZip(content)
-                const doc = new Docxtemplater(zip, {
-                    linebreaks: true,
-                    paragraphLoop: true,
-                })
-                doc.render(generateWordExport(items))
-                const blob = doc.getZip().generate({
-                    type: 'blob',
-                    mimeType:
-                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                })
-                saveAs(blob, 'export.docx')
+                let blob: Blob
+                if (doc instanceof Buffer) {
+                    blob = new Blob([doc], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' })
+                } else {
+                    blob = doc
+                }
+                saveAs(blob, `export-${type}.docx`)
             }
         )
     }
 
-    return (<Button onPress={generateDocument} isDisabled={!checkIsFullPaper(items)} variant='flat' size='lg' color='primary' isIconOnly startContent={<PiMicrosoftWordLogoDuotone />}></Button>)
+    return (<Button onPress={generateDocument} className='text-xl rounded-full' variant='light' isIconOnly startContent={<PiMicrosoftWordLogoDuotone />}></Button>)
 }

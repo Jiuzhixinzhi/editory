@@ -9,9 +9,10 @@ import { useEffect, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import Cookies from 'js-cookie'
 import { Button } from '@nextui-org/react'
-import { PiArrowSquareOutDuotone, PiSealQuestionDuotone, PiOptionDuotone, PiMagicWandDuotone, PiSmileySadDuotone } from 'react-icons/pi'
+import { PiArrowSquareOutDuotone, PiSealQuestionDuotone, PiOptionDuotone, PiMagicWandDuotone } from 'react-icons/pi'
 import { genDefaultValue } from '@/utils/config'
 import Main from '../main'
+import Download from '../download'
 import { updatePaper } from '../papers/actions'
 import Link from 'next/link'
 
@@ -107,6 +108,7 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
           <section className='w-full'>
             <div className='flex items-center'>
               <Button isIconOnly startContent={<PiArrowSquareOutDuotone />} className='text-xl rounded-full' variant='light' target='_blank' href={id ? `https://${id}.editory.xyz/paper` : '/paper'} as={Link}></Button>
+              <Download items={items} type="paper" />
               <h2 className='font-bold text-4xl py-8'>Paper</h2>
             </div>
             <div className='border-primary-400/20 border-4 rounded bg-primary-50/20'>
@@ -117,6 +119,7 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
           <section className='w-full'>
             <div className='flex items-center'>
               <Button isIconOnly startContent={<PiArrowSquareOutDuotone />} className='text-xl rounded-full' variant='light' target='_blank' href={id ? `https://${id}.editory.xyz/key` : '/key'} as={Link}></Button>
+              <Download items={items} type="key" />
               <h2 className='font-bold text-4xl py-8'>Key</h2>
             </div>
             <div className='border-default-500/20 border-1 rounded bg-background/30'>

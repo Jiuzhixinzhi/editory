@@ -15,7 +15,7 @@ export default function Features() {
     >
         {[
             { icon: PiCloudDuotone, title: 'Sync to the Cloud', description: 'Keep your papers safe and accessible from anywhere.', gradient: 'from-blue-100/70 to-purple-100/70', iconColor: 'text-blue-500' },
-            { icon: PiMicrosoftWordLogoDuotone, title: 'Export to Word', description: 'Easily export your papers to Microsoft Word format (coming soon).', gradient: 'from-purple-100/70 to-pink-100/70', iconColor: 'text-purple-500' },
+            { icon: PiMicrosoftWordLogoDuotone, title: 'Export to Word', description: 'Easily export your papers to Microsoft Word format (early experimental).', gradient: 'from-purple-100/70 to-pink-100/70', iconColor: 'text-purple-500' },
             { icon: PiGithubLogoDuotone, title: 'Proudly Open Source', description: 'You can always see what we\'re doing or deploy your own version.', gradient: 'from-pink-100/70 to-red-100/70', iconColor: 'text-pink-500' },
         ].map((feature, index) => (
             <motion.div

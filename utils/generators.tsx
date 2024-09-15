@@ -1,149 +1,16 @@
 import type Data from './types'
 import type { FishingData, ClozeData, GrammarData, SentenceChoiceData, ReadingData, ListeningData, CustomData, Config } from './types'
 import { ALPHABET_SET, NAME_MAP } from './config'
+import { generateDocx as generateDocxInner } from './docx'
 
 import type { JSX } from 'react'
 import fastShuffle from 'fast-shuffle'
 import seedrandom from 'seedrandom'
 
-import parse, { type DOMNode } from 'html-react-parser'
+import parseToJSX, { type DOMNode } from 'html-react-parser'
+import { renderToString } from 'react-dom/server'
 import { ElementType } from 'domelementtype'
 import type { Element, Text } from 'domhandler'
-
-export function checkIsFullPaper(data: Data[]) {
-    return data[8]
-        && data[0].type === 'custom'
-        && data[1].type === 'listening'
-        && data[2].type === 'grammar'
-        && data[3].type === 'fishing'
-        && data[4].type === 'cloze'
-        && data[5].type === 'reading'
-        && data[6].type === 'reading'
-        && data[7].type === 'reading'
-        && data[8].type === '4/6'
-}
-
-export function generateWordExport(data: Data[]) {
-    return {
-        // 短对话 * 10
-        shortConversations: [{
-            no: 1,
-            a: 'He didn’t know it would be cold.',
-            b: 'He misunderstood the weather report.',
-            c: 'He didn’t have time to look for the coat.',
-            d: 'He forgot to bring the coat.',
-        }],
-        // 长对话A * 3
-        shortPassageA: [{
-            no: 11,
-            a: 'He didn’t know it would be cold.',
-            b: 'He misunderstood the weather report.',
-            c: 'He didn’t have time to look for the coat.',
-            d: 'He forgot to bring the coat.',
-        }],
-        // 长对话B * 3
-        shortPassageB: [{
-            no: 14,
-            a: 'He didn’t know it would be cold.',
-            b: 'He misunderstood the weather report.',
-            c: 'He didn’t have time to look for the coat.',
-            d: 'He forgot to bring the coat.',
-        }],
-        // 长对话C * 4
-        longConversationC: [{
-            no: 17,
-            a: 'He didn’t know it would be cold.',
-            b: 'He misunderstood the weather report.',
-            c: 'He didn’t have time to look for the coat.',
-            d: 'He forgot to bring the coat.',
-        }],
-        // 语法
-        grammarTitle: 'Grammar Title',
-        grammarText: 'Grammar Text',
-        // 钓鱼
-        vocabTitle: 'Vocab Title',
-        vocabText: 'Vocab Text',
-        vocabA: 'Option A',
-        vocabB: 'Option B',
-        vocabC: 'Option C',
-        vocabD: 'Option D',
-        vocabE: 'Option E',
-        vocabF: 'Option F',
-        vocabG: 'Option G',
-        vocabH: 'Option H',
-        vocabI: 'Option I',
-        vocabJ: 'Option J',
-        vocabK: 'Option K',
-        // 完型填空 * 15
-        clozeTitle: 'Cloze Title',
-        clozeText: 'Cloze Text',
-        clozeOptions: [{
-            no: 41,
-            a: 'Option A',
-            b: 'Option B',
-            c: 'Option C',
-            d: 'Option D',
-        }, {
-            no: 42,
-            a: 'Option A',
-            b: 'Option B',
-            c: 'Option C',
-            d: 'Option D',
-        }],
-        // 阅读理解A * n
-        readingAText: 'Reading A Text',
-        readingAQuestions: [{
-            no: 56,
-            q: 'What?',
-            a: 'Option A',
-            b: 'Option B',
-            c: 'Option C',
-            d: 'Option D',
-        }],
-        // 阅读理解B * n
-        readingBText: 'Reading B Text',
-        readingBQuestions: [{
-            no: 60,
-            q: 'What?',
-            a: 'Option A',
-            b: 'Option B',
-            c: 'Option C',
-            d: 'Option D',
-        }],
-        // 阅读理解C * n
-        readingCText: 'Reading C Text',
-        readingCQuestions: [{
-            no: 63,
-            q: 'What?',
-            a: 'Option A',
-            b: 'Option B',
-            c: 'Option C',
-            d: 'Option D',
-        }],
-        // 六选四 * 6
-        sentenceOptions: [{
-            marker: 'A',
-            text: 'Option A',
-        }, {
-            marker: 'B',
-            text: 'Option B',
-        }, {
-            marker: 'C',
-            text: 'Option C',
-        }, {
-            marker: 'D',
-            text: 'Option D',
-        }, {
-            marker: 'E',
-            text: 'Option E',
-        }, {
-            marker: 'F',
-            text: 'Option F',
-        }],
-        sentenceTitle: '4/6 Title',
-        sentenceText: '4/6 Text',
-    }
-}
 
 function generator_getter(data: Data, config: Config): () => Generator<Data> | null {
     switch (data.type) {
@@ -193,6 +60,19 @@ export function generateKey(data: Data[]) {
     })
 }
 
+export function generateDocx(data: Data[], type: 'paper' | 'key'): Promise<Blob> {
+    let start = 1
+
+    return generateDocxInner(data.map((data) => {
+        let generator = generator_getter(data, { start })()
+        if (generator === null) {
+            return
+        }
+        start += generator.countQuestions
+        return renderToString(generator[type])
+    }).filter(item => item !== undefined))
+}
+
 interface GeneratorAttr {
     defaultCountSpaces: number
     displayName: boolean
@@ -216,7 +96,7 @@ abstract class Generator<T extends Data> {
         this.onBeforeWalk()
         // to prevent incorrect this context
         const replacer = this.replacer.bind(this)
-        const paperBasic = 'text' in data ? parse(data.text, {
+        const paperBasic = 'text' in data ? parseToJSX(data.text, {
             replace: replacer,
         }) : undefined
         this.paper = (
@@ -248,6 +128,22 @@ abstract class Generator<T extends Data> {
     public getBlankElement(number?: number): JSX.Element {
         let _number = number ?? this.getNumber()
         return <u>{this.spaces}{_number}{this.spaces}</u>
+    }
+
+    public toTableRows(cells: JSX.Element[], perLine: number): JSX.Element[] {
+        while (cells.length % perLine !== 0) {
+            cells.push(<td key={cells.length}></td>)
+        }
+        const rows: JSX.Element[] = []
+        let row: JSX.Element[] = []
+        cells.forEach((cell, index) => {
+            row.push(cell)
+            if (row.length >= perLine) {
+                rows.push(<tr key={index}>{row}</tr>)
+                row = []
+            }
+        })
+        return rows
     }
 
     public abstract getGeneratorAttr(): GeneratorAttr
@@ -296,13 +192,18 @@ class FishingGenerator extends Generator<FishingData> {
 
     protected addPaper(): JSX.Element[] {
         const options = this.options.map((option, index) => (
-            <span key={option}>
-                <span className="paper-option-marker pr-2">{ALPHABET_SET[index]}.</span>
-                <span className='paper-option-content'>{option}</span>
-            </span>
+            <td key={option} className="px-4">
+                {ALPHABET_SET[index]}. {option}
+            </td>
         ))
         return [
-            <section className="paper-options border border-default-900 p-4 my-2 flex flex-wrap gap-x-8" key={options.join('')}>{options}</section>,
+            <section className="paper-options my-2" key={this.data.id}>
+                <table className="border border-default-900">
+                    <tbody>
+                        {this.toTableRows(options, 6)}
+                    </tbody>
+                </table>
+            </section>,
             this.paper,
         ]
     }
@@ -409,7 +310,7 @@ class GrammarGenerator extends Generator<GrammarData> {
             this.keyContents.push(content)
             if (hint === undefined || hint === '') {
                 const words = content.split(' ').length
-                const underlines = new Array<JSX.Element[]>(words).fill([<u key={content + "_underline"}>{this.spaces}{this.getNumber()}{this.spaces}</u>, <span key={content + "_space"}>&nbsp;</span>]).flat()
+                const underlines = new Array<JSX.Element[]>(words).map((_, index) => [<u key={content + "_underline" + index.toString()}>{this.spaces}{this.getNumber()}{this.spaces}</u>, <span key={content + "_space"}>&nbsp;</span>]).flat()
                 underlines.pop()
                 return <span>{underlines}</span>
             } else {
@@ -466,13 +367,18 @@ class SentenceChoiceGenerator extends Generator<SentenceChoiceData> {
 
     protected addPaper(): JSX.Element[] {
         const options = this.options.map((option, index) => (
-            <span key={option}>
-                <span className="paper-option-marker pr-2">{ALPHABET_SET[index]}.</span>
-                <span className='paper-option-content'>{option}</span>
-            </span>
+            <td key={option} className="px-4">
+                {ALPHABET_SET[index]}. {option}
+            </td>
         ))
         return [
-            <section className="paper-options border border-default-900 p-4 my-2 flex flex-wrap gap-x-8" key={options.join('')}>{options}</section>,
+            <section className="paper-options my-2" key={options.join('')}>
+                <table className="border border-default-900">
+                    <tbody>
+                        {this.toTableRows(options, 1)}
+                    </tbody>
+                </table>
+            </section>,
             this.paper,
         ]
     }
@@ -507,7 +413,7 @@ class ReadingGenerator extends Generator<ReadingData> {
         const questions = this.data.questions.map(question => {
             this.countQuestions++
             const options = question.a?.map((option, index) => (
-                <p key={index}><span>{ALPHABET_SET[index]}.</span> <span>{option}</span></p>
+                <p key={option}><span>{ALPHABET_SET[index]}.</span> <span>{option}</span></p>
             ))
             return (
                 <div key={question.q}>
@@ -557,7 +463,7 @@ class ListeningGenerator extends Generator<ListeningData> {
             return (
                 <div key={question.q}>
                     <div>
-                        <p><span>{this.getNumber()}.</span> <span>{question.q}</span></p>
+                        <p><span>{this.getNumber()}.</span></p>
                     </div>
                     <div>
                         {options}
@@ -597,13 +503,13 @@ class CustomGenerator extends Generator<CustomData> {
 
     protected addPaper(): JSX.Element[] {
         return [<section key={this.data.paper}>
-            {parse(this.data.paper)}
+            {parseToJSX(this.data.paper)}
         </section>]
     }
 
     protected generateKey(): JSX.Element[] {
-        return [<section key={this.data.paper}>
-            {parse(this.data.key)}
+        return [<section key={this.data.key}>
+            {parseToJSX(this.data.key)}
         </section>]
     }
 }

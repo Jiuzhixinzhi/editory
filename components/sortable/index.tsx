@@ -21,7 +21,6 @@ import { genDefaultValue, ICON_MAP, NAME_MAP } from '@/utils/config'
 import { Button, Dropdown, DropdownMenu, DropdownItem, DropdownTrigger } from '@nextui-org/react'
 import { PiPlusCircleDuotone } from 'react-icons/pi'
 import SortableItem from './item'
-import Download from '../download'
 
 export default function Sortable({ items, setItems }: {
     items: Data[]
@@ -37,7 +36,6 @@ export default function Sortable({ items, setItems }: {
     return (
         <div className='flex gap-4'>
             <div className='flex flex-col gap-4 place-self-end'>
-                <Download items={items} />
                 <Dropdown>
                     <DropdownTrigger>
                         <Button color='primary' variant='flat' size='lg' startContent={<PiPlusCircleDuotone />} isIconOnly></Button>
