@@ -4,7 +4,7 @@ import Tiptap from '../../tiptap'
 import List from '../../../list'
 import { FishingData } from '@/utils/types'
 import { without } from 'es-toolkit'
-import { PiArrowBendRightUpDuotone, PiCursorTextDuotone, PiSealQuestionDuotone } from 'react-icons/pi'
+import { PiArrowBendRightUpDuotone, PiCursorTextDuotone } from 'react-icons/pi'
 import clsx from 'clsx'
 import { themeFont } from '@/utils/fonts'
 

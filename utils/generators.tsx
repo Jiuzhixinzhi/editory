@@ -8,7 +8,6 @@ import fastShuffle from 'fast-shuffle'
 import seedrandom from 'seedrandom'
 
 import parseToJSX, { type DOMNode } from 'html-react-parser'
-import { renderToString } from 'react-dom/server'
 import { ElementType } from 'domelementtype'
 import type { Element, Text } from 'domhandler'
 
@@ -69,7 +68,8 @@ export function generateDocx(data: Data[], type: 'paper' | 'key'): Promise<Blob>
             return
         }
         start += generator.countQuestions
-        return renderToString(generator[type])
+        const ReactDOMServer = require('react-dom/server')
+        return ReactDOMServer.renderToString(generator[type])
     }).filter(item => item !== undefined))
 }
 
@@ -139,7 +139,7 @@ abstract class Generator<T extends Data> {
         cells.forEach((cell, index) => {
             row.push(cell)
             if (row.length >= perLine) {
-                rows.push(<tr key={index}>{row}</tr>)
+                rows.push(<tr key={index} className='flex flex-wrap'>{row}</tr>)
                 row = []
             }
         })
@@ -192,7 +192,7 @@ class FishingGenerator extends Generator<FishingData> {
 
     protected addPaper(): JSX.Element[] {
         const options = this.options.map((option, index) => (
-            <td key={option} className="px-4">
+            <td key={option} className="px-4 py-2 whitespace-nowrap">
                 {ALPHABET_SET[index]}. {option}
             </td>
         ))

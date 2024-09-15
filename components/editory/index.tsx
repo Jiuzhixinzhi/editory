@@ -110,7 +110,7 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
 
           <section className='w-full'>
             <div className='flex items-center'>
-              <Button isIconOnly startContent={<PiArrowSquareOutDuotone />} className='text-xl rounded-full' variant='light' target='_blank' href={id ? `https://${id}.editory.xyz/paper` : '/paper'} as={Link}></Button>
+              {id && <Button isIconOnly startContent={<PiArrowSquareOutDuotone />} className='text-xl rounded-full' variant='light' target='_blank' href={id ? `https://${id}.editory.xyz/paper` : '/paper'} as={Link}></Button>}
               <Download items={items} type="paper" />
               <h2 className='font-bold text-4xl py-8'>Paper</h2>
             </div>
@@ -121,7 +121,7 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
 
           <section className='w-full'>
             <div className='flex items-center'>
-              <Button isIconOnly startContent={<PiArrowSquareOutDuotone />} className='text-xl rounded-full' variant='light' target='_blank' href={id ? `https://${id}.editory.xyz/key` : '/key'} as={Link}></Button>
+              {id && <Button isIconOnly startContent={<PiArrowSquareOutDuotone />} className='text-xl rounded-full' variant='light' target='_blank' href={id ? `https://${id}.editory.xyz/key` : '/key'} as={Link}></Button>}
               <Download items={items} type="key" />
               <h2 className='font-bold text-4xl py-8'>Key</h2>
             </div>
