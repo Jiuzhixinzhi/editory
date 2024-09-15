@@ -10,7 +10,7 @@ import { PiSignInDuotone } from 'react-icons/pi'
 
 export const metadata = {
     title: 'Reimagine the creation of ESL exam papers',
-    description: 'Reimagine the creation of ESL exam papers',
+    description: 'Made by the front-line, for the front-line.',
 }
 
 export default function ReimagineTheCreationOfESLExamPapers() {

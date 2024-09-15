@@ -76,18 +76,21 @@ export default function Editory({ data, id }: { data: Data[] | null, id?: string
                   id
                     ? <><span className='font-bold'>Auto-saved</span> every second</>
                     : <>
-                      <Link href='/' className='font-extrabold underline'>Sign in</Link> to sync to the cloud                    </>
+                      <Link href='/' className='font-extrabold underline'>Sign in</Link> to sync to the cloud
+                    </>
                 }
               </p>
               <p className='text-sm text-default-800/50 text-balance'>
-                <span className='font-bold'>Select</span> to blank a word
+                <span className='font-bold'>Select a word</span> to blank it
               </p>
               <p className='text-sm text-default-800/50 text-balance'>
-                <span className='font-bold'>Generate PDF</span>: Press Ctrl + P
+                <span className='font-bold'>Generate PDF</span> by Ctrl + P
               </p>
-              <p className='text-sm text-default-800/50 text-balance'>
-                <span className='font-bold'>Full papers</span> can be exported
-              </p>
+              {id ? <p className='text-sm text-default-800/50 text-balance'>
+                <span className='font-bold'>Full papers</span> exportable
+              </p> : <p className='text-sm text-default-800/50 text-balance'>
+                <span className='font-bold'>Exportable</span> upon sign-in
+              </p>}
               {
                 id && (
                   <p className='text-sm text-default-800/50 text-balance'>
