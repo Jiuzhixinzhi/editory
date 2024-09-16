@@ -3,14 +3,14 @@ import type { FishingData, ClozeData, GrammarData, SentenceChoiceData, ReadingDa
 import { ALPHABET_SET, NAME_MAP } from './config'
 import { generateDocx as generateDocxInner } from './docx'
 
-import type { JSX } from 'react'
 import fastShuffle from 'fast-shuffle'
 import seedrandom from 'seedrandom'
 
-import parseToJSX, { type DOMNode } from 'html-react-parser'
-import { renderToString } from 'react-dom/server'
+import render from 'dom-serializer'
+import { parseDocument } from 'htmlparser2'
 import { ElementType } from 'domelementtype'
-import type { Element, Text } from 'domhandler'
+import { Element, Text, Document, ChildNode } from 'domhandler'
+import { type DOMNode } from 'html-dom-parser'
 
 function generator_getter(data: Data, config: Config): () => Generator<Data> | null {
     switch (data.type) {
@@ -40,11 +40,11 @@ export function generatePaper(data: Data[]) {
     return data.map((data) => {
         let generator = generator_getter(data, { start })()
         if (generator === null) {
-            return <></>
+            return ""
         }
         start += generator.countQuestions
-        return generator.paper
-    })
+        return render(generator.paper)
+    }).join('')
 }
 
 export function generateKey(data: Data[]) {
@@ -53,11 +53,11 @@ export function generateKey(data: Data[]) {
     return data.map((data) => {
         let generator = generator_getter(data, { start })()
         if (generator === null) {
-            return <></>
+            return ""
         }
         start += generator.countQuestions
-        return generator.key
-    })
+        return render(generator.key)
+    }).join('')
 }
 
 export function generateDocx(data: Data[], type: 'paper' | 'key'): Promise<Blob> {
@@ -69,18 +69,19 @@ export function generateDocx(data: Data[], type: 'paper' | 'key'): Promise<Blob>
             return
         }
         start += generator.countQuestions
-        return renderToString(generator[type])
+        return generator[type]
     }).filter(item => item !== undefined))
 }
 
 interface GeneratorAttr {
     defaultCountSpaces: number
     displayName: boolean
+    keyPerLine: number
 }
 
 abstract class Generator<T extends Data> {
-    public paper: JSX.Element
-    public key: JSX.Element
+    public paper: Element
+    public key: Element
     public countQuestions: number
 
     protected spaces: string
@@ -94,27 +95,46 @@ abstract class Generator<T extends Data> {
         this.spaces = new Array(config?.countSpaces ?? attr.defaultCountSpaces).fill('\u00A0').join('')
         this.countQuestions = 0
         this.onBeforeWalk()
-        // to prevent incorrect this context
-        const replacer = this.replacer.bind(this)
-        const paperBasic = 'text' in data ? parseToJSX(data.text, {
-            replace: replacer,
-        }) : undefined
-        this.paper = (
-            <section>
-                {paperBasic}
-            </section>
-        )
+        if ('text' in data) {
+            const document = parseDocument(data.text)
+            this.replace(document)
+            this.paper = new Element('section', { class: 'paper-content' }, document.children)
+        } else {
+            this.paper = new Element('section', { class: 'paper-content' }, [])
+        }
         this.onAfterWalk()
-        const titleJSX = attr.displayName ? <h2 className='text-2xl font-bold'>{NAME_MAP[data.type]}</h2> : <></>
-        this.paper = (
-            <article key={this.data.id} className='flex flex-col my-4'>
-                {titleJSX}
-                {this.addPaper()}
-            </article>
+        const articleTypeElement = attr.displayName ? [new Element(
+            'h2', { class: 'text-2xl font-bold section-name-title' },
+            [new Text(NAME_MAP[data.type])]
+        )] : []
+        this.paper = new Element('article', { class: 'flex flex-col my-4' }, [
+            ...articleTypeElement,
+            ...this.addPaper(),
+        ])
+        const key = this.generateKey()
+
+        this.key = new Element(
+            'table', { class: 'my-2' },
+            attr.keyPerLine !== 0 ? this.toTableRows(key.map(([number, element]) => {
+                return new Element(
+                    'td', { class: 'key-item px-2' },
+                    [new Text(number.toString() + ". "), element])
+            }), attr.keyPerLine) : key.map(([_, element]) => element)
         )
-        this.key = (
-            <section key={this.data.id} className="flex flex-wrap gap-x-8">{this.generateKey()}</section>
-        )
+    }
+
+    protected replaceInner(node: ChildNode, parent: Element | Document) {
+        const newNode = this.replacer(node)
+        if (newNode !== undefined) {
+            parent.children.splice(parent.children.indexOf(node), 1, newNode)
+        }
+        if (node.type === ElementType.Tag) {
+            node.children.forEach(child => this.replaceInner(child, node))
+        }
+    }
+
+    public replace(doc: Document) {
+        doc.children.forEach(node => this.replaceInner(node, doc))
     }
 
     public getSeed(content: string | number) {
@@ -125,21 +145,23 @@ abstract class Generator<T extends Data> {
         return this.start + this.countQuestions - 1
     }
 
-    public getBlankElement(number?: number): JSX.Element {
+    public getBlankElement(number?: number): Element {
         let _number = number ?? this.getNumber()
-        return <u>{this.spaces}{_number}{this.spaces}</u>
+        return new Element('u', {}, [
+            new Text(this.spaces + _number.toString() + this.spaces)
+        ])
     }
 
-    public toTableRows(cells: JSX.Element[], perLine: number): JSX.Element[] {
+    public toTableRows(cells: Element[], perLine: number): Element[] {
         while (cells.length % perLine !== 0) {
-            cells.push(<td key={cells.length}></td>)
+            cells.push(new Element('td', {}, []))
         }
-        const rows: JSX.Element[] = []
-        let row: JSX.Element[] = []
-        cells.forEach((cell, index) => {
+        const rows: Element[] = []
+        let row: Element[] = []
+        cells.forEach(cell => {
             row.push(cell)
             if (row.length >= perLine) {
-                rows.push(<tr key={index}>{row}</tr>)
+                rows.push(new Element('tr', {}, row))
                 row = []
             }
         })
@@ -150,14 +172,13 @@ abstract class Generator<T extends Data> {
 
     protected abstract onBeforeWalk(): void
 
-    /** Since replacer is in object {replace: this.replacer}, which can cause incorrect this context. */
-    protected abstract replacer(node: DOMNode): JSX.Element | undefined
+    protected abstract replacer(node: ChildNode): Element | Text | undefined
 
     protected abstract onAfterWalk(): void
 
-    protected abstract addPaper(): JSX.Element[]
+    protected abstract addPaper(): Element[]
 
-    protected abstract generateKey(): JSX.Element[]
+    protected abstract generateKey(): [number, Element | Text][]
 }
 
 class FishingGenerator extends Generator<FishingData> {
@@ -168,6 +189,7 @@ class FishingGenerator extends Generator<FishingData> {
         return {
             defaultCountSpaces: 3,
             displayName: true,
+            keyPerLine: 5,
         }
     }
 
@@ -175,7 +197,7 @@ class FishingGenerator extends Generator<FishingData> {
         this.options = new Array()
     }
 
-    protected replacer(node: DOMNode): JSX.Element | undefined {
+    protected replacer(node: DOMNode): Element | Text | undefined {
         if (node.type === ElementType.Tag && node.tagName === 'code') {
             this.countQuestions++
             this.options.push((node.children[0] as Text)?.data)
@@ -190,32 +212,26 @@ class FishingGenerator extends Generator<FishingData> {
         this.options = fastShuffle(seed, this.options)
     }
 
-    protected addPaper(): JSX.Element[] {
-        const options = this.options.map((option, index) => (
-            <td key={option} className="px-4">
-                {ALPHABET_SET[index]}. {option}
-            </td>
-        ))
+    protected addPaper(): Element[] {
+        const options = this.options.map((option, index) => new Element(
+            'td', { key: option, className: 'px-4' }, [
+            new Text(ALPHABET_SET[index] + ". " + option)
+        ]))
         return [
-            <section className="paper-options my-2" key={this.data.id}>
-                <table className="border border-default-900">
-                    <tbody>
-                        {this.toTableRows(options, 6)}
-                    </tbody>
-                </table>
-            </section>,
+            new Element('section', { class: 'paper-options my-2' }, [
+                new Element('table', { class: 'border border-default-900' }, [
+                    new Element('tbody', {}, this.toTableRows(options, 6)),
+                ]),
+            ]),
             this.paper,
         ]
     }
 
-    protected generateKey(): JSX.Element[] {
-        const keyJSX = this.correctAnswers.map((correctAnswer, index) => (
-            <span key={correctAnswer}>
-                <span className="paper-option-marker pr-2">{this.start + index}.</span>
-                <span className='paper-option-content'>{this.data.markerSet[this.options.indexOf(correctAnswer)]}</span>
-            </span>
-        ))
-        return keyJSX
+    protected generateKey(): [number, Element | Text][] {
+        return this.correctAnswers.map((correctAnswer, index) => [
+            this.start + index,
+            new Text(this.data.markerSet[this.options.indexOf(correctAnswer)])
+        ])
     }
 }
 
@@ -230,10 +246,11 @@ class ClozeGenerator extends Generator<ClozeData> {
         return {
             defaultCountSpaces: 3,
             displayName: true,
+            keyPerLine: 5,
         }
     }
 
-    protected replacer(node: DOMNode): JSX.Element | undefined {
+    protected replacer(node: DOMNode): Element | Text | undefined {
         if (node.type === ElementType.Tag && node.tagName === 'code') {
             this.countQuestions++
             const content = ((node as Element).children[0] as Text)?.data
@@ -249,42 +266,29 @@ class ClozeGenerator extends Generator<ClozeData> {
         }
     }
 
-    protected addPaper(): JSX.Element[] {
+    protected addPaper(): Element[] {
         this.countQuestions = 0
         const options = Object.keys(this.options).map((content) => {
             this.countQuestions++
-            const optionsJSX = this.options[content].map((option, index) => (
-                <td key={content + "#" + option}>
-                    <span className="paper-option-marker pr-2">{ALPHABET_SET[index]}.</span>
-                    <span className='paper-option-content break-all'>{option}</span>
-                </td>
-            ))
-            return (
-                <tr key={content} className='leading-snug'>
-                    <td>{this.getNumber()}.</td>
-                    {optionsJSX}
-                </tr>
-            )
+            return new Element('tr', { class: 'leading-snug' }, [
+                new Element('td', {}, [new Text(this.getNumber().toString() + ".")]),
+                ...this.options[content].map((option, index) => new Element("td", {}, [new Text(ALPHABET_SET[index] + ". " + option)]))
+            ])
         })
         return [
             this.paper,
-            <table key="options">
-                <tbody>
-                    {options}
-                </tbody>
-            </table>,
+            new Element('table', {}, [
+                new Element('tbody', {}, options)
+            ])
         ]
     }
 
-    protected generateKey(): JSX.Element[] {
-        const keyJSX = Object.keys(this.options).map((content, index) => {
+    protected generateKey(): [number, Element | Text][] {
+        return Object.keys(this.options).map((content, index) => {
             const correctIndex = this.options[content].indexOf(content)
             const marker = ALPHABET_SET[correctIndex]
-            return (
-                <span key={content}>{this.start + index}. {marker}</span>
-            )
+            return [this.start + index, new Text(marker)]
         })
-        return keyJSX
     }
 }
 
@@ -295,6 +299,7 @@ class GrammarGenerator extends Generator<GrammarData> {
         return {
             defaultCountSpaces: 3,
             displayName: true,
+            keyPerLine: 2,
         }
     }
 
@@ -302,7 +307,7 @@ class GrammarGenerator extends Generator<GrammarData> {
         this.keyContents = []
     }
 
-    protected replacer(node: DOMNode): JSX.Element | undefined {
+    protected replacer(node: DOMNode): Element | Text | undefined {
         if (node.type === ElementType.Tag && node.tagName === 'code') {
             this.countQuestions++
             const content = ((node as Element).children[0] as Text).data
@@ -310,26 +315,32 @@ class GrammarGenerator extends Generator<GrammarData> {
             this.keyContents.push(content)
             if (hint === undefined || hint === '') {
                 const words = content.split(' ').length
-                const underlines = new Array<JSX.Element[]>(words).map((_, index) => [<u key={content + "_underline" + index.toString()}>{this.spaces}{this.getNumber()}{this.spaces}</u>, <span key={content + "_space"}>&nbsp;</span>]).flat()
+                // const underlines = new Array<JSX.Element[]>(words).map((_, index) => [<u key={content + "_underline" + index.toString()}>{this.spaces}{this.getNumber()}{this.spaces}</u>, <span key={content + "_space"}>&nbsp;</span>]).flat()
+                const underlines = new Array(words).fill(0).map(() => [
+                    this.getBlankElement(),
+                    new Text(' '),
+                ]).flat()
                 underlines.pop()
-                return <span>{underlines}</span>
+                return new Element('span', {}, underlines)
             } else {
-                return <span>{this.getBlankElement()} <span className='paper-hint'>({hint})</span></span>
+                return new Element('span', { class: 'paper-hint' }, [
+                    this.getBlankElement(),
+                    new Text(` (${hint})`)
+                ])
             }
         }
     }
 
     protected onAfterWalk(): void { }
 
-    protected addPaper(): JSX.Element[] {
+    protected addPaper(): Element[] {
         return [this.paper]
     }
 
-    protected generateKey(): JSX.Element[] {
-        const keyJSX = this.keyContents.map((content, index) => (
-            <span key={content}>{this.start + index}. {content}</span>
-        ))
-        return keyJSX
+    protected generateKey(): [number, Element | Text][] {
+        return this.keyContents.map((content, index) => [
+            this.start + index, new Text(content)
+        ])
     }
 }
 
@@ -341,6 +352,7 @@ class SentenceChoiceGenerator extends Generator<SentenceChoiceData> {
         return {
             defaultCountSpaces: 8,
             displayName: true,
+            keyPerLine: 4,
         }
     }
 
@@ -349,7 +361,7 @@ class SentenceChoiceGenerator extends Generator<SentenceChoiceData> {
         this.correctAnswers = []
     }
 
-    protected replacer(node: DOMNode): JSX.Element | undefined {
+    protected replacer(node: DOMNode): Element | Text | undefined {
         if (node.type === ElementType.Tag && node.tagName === 'code') {
             this.countQuestions++
             const content = ((node as Element).children[0] as Text | null)?.data ?? ""
@@ -365,32 +377,25 @@ class SentenceChoiceGenerator extends Generator<SentenceChoiceData> {
         this.options = fastShuffle(seed, this.options)
     }
 
-    protected addPaper(): JSX.Element[] {
-        const options = this.options.map((option, index) => (
-            <td key={option} className="px-4">
-                {ALPHABET_SET[index]}. {option}
-            </td>
+    protected addPaper(): Element[] {
+        const options = this.options.map((option, index) => new Element(
+            "td", { class: 'px-4' }, [new Text(ALPHABET_SET[index] + ". " + option)]
         ))
         return [
-            <section className="paper-options my-2" key={options.join('')}>
-                <table className="border border-default-900">
-                    <tbody>
-                        {this.toTableRows(options, 1)}
-                    </tbody>
-                </table>
-            </section>,
+            new Element('section', { class: 'paper-options my-2' }, [
+                new Element('table', { class: 'border border-default-900' }, [
+                    new Element('tbody', {}, this.toTableRows(options, 1)),
+                ]),
+            ]),
             this.paper,
         ]
     }
 
-    protected generateKey(): JSX.Element[] {
-        const keyJSX = this.correctAnswers.map((correctAnswer, index) => (
-            <span key={correctAnswer}>
-                <span className="paper-option-marker pr-2">{this.start + index}.</span>
-                <span className='paper-option-content'>{ALPHABET_SET[this.options.indexOf(correctAnswer)]}</span>
-            </span>
-        ))
-        return keyJSX
+    protected generateKey(): [number, Element | Text][] {
+        return this.correctAnswers.map((correctAnswer, index) => [
+            this.start + index,
+            new Text(ALPHABET_SET[this.options.indexOf(correctAnswer)])
+        ])
     }
 }
 
@@ -400,42 +405,39 @@ class ReadingGenerator extends Generator<ReadingData> {
         return {
             defaultCountSpaces: 0,
             displayName: true,
+            keyPerLine: 4,
         }
     }
 
     protected onBeforeWalk() { }
 
-    protected replacer(node: DOMNode): JSX.Element | undefined { return }
+    protected replacer(node: DOMNode): undefined { return }
 
     protected onAfterWalk(): void { }
 
-    protected addPaper(): JSX.Element[] {
+    protected addPaper(): Element[] {
         const questions = this.data.questions.map(question => {
             this.countQuestions++
-            const options = question.a?.map((option, index) => (
-                <p key={option}><span>{ALPHABET_SET[index]}.</span> <span>{option}</span></p>
+            const options = question.a?.map((option, index) => new Element(
+                "td", {}, [new Text(ALPHABET_SET[index] + ". "), new Text(option)]
             ))
             return (
-                <div key={question.q}>
-                    <p><span>{this.getNumber()}.</span> <span>{question.q}</span></p>
-                    {options}
-                </div>
+                new Element('div', {}, [
+                    new Element('p', {}, [new Text(this.getNumber().toString() + ". " + question.q)]),
+                    new Element('table', { class: 'not-prose' }, this.toTableRows(options, 1)),
+                ])
             )
         })
         return [
             this.paper,
-            <section className="paper-options my-2 flex flex-wrap gap-x-8" key="questions">{questions}</section>
+            new Element('section', { class: 'paper-options my-2 flex flex-col gap-y-2' }, questions)
         ]
     }
 
-    protected generateKey(): JSX.Element[] {
-        const keyJSX = this.data.questions.map((question, index) => (
-            <span key={question.q}>
-                <span className="paper-option-marker pr-2">{this.start + index}.</span>
-                <span className='paper-option-content'>{ALPHABET_SET[question.correct]}</span>
-            </span>
-        ))
-        return keyJSX
+    protected generateKey(): [number, Element | Text][] {
+        return this.data.questions.map((question, index) => [
+            this.start + index, new Text(ALPHABET_SET[question.correct])
+        ])
     }
 }
 
@@ -445,45 +447,35 @@ class ListeningGenerator extends Generator<ListeningData> {
         return {
             defaultCountSpaces: 0,
             displayName: true,
+            keyPerLine: 5,
         }
     }
 
     protected onBeforeWalk() { }
 
-    protected replacer(node: DOMNode): JSX.Element | undefined { return }
+    protected replacer(node: DOMNode): undefined { return }
 
     protected onAfterWalk(): void { }
 
-    protected addPaper(): JSX.Element[] {
+    protected addPaper(): Element[] {
         const questions = this.data.questions.map(question => {
             this.countQuestions++
-            const options = question.a?.map((option, index) => (
-                <p key={option}><span>{ALPHABET_SET[index]}.</span> <span>{option}</span></p>
-            ))
-            return (
-                <div key={question.q}>
-                    <div>
-                        <p><span>{this.getNumber()}.</span></p>
-                    </div>
-                    <div>
-                        {options}
-                    </div>
-                </div>
-            )
+            const options = question.a?.map((option, index) => new Element('td', {}, [
+                new Text(ALPHABET_SET[index] + ". " + option),
+            ]))
+            return new Element('div', { class: 'flex gap-x-2 listening-item' }, [
+                new Element('div', {}, [new Text(this.getNumber().toString() + ". ")]),
+                new Element('table', { class: 'my-0 not-prose' }, this.toTableRows(options, 1)),
+            ])
         })
-        return [
-            <section key={questions.join('')}>{questions}</section>
-        ]
+        return [new Element('section', {}, questions)]
     }
 
-    protected generateKey(): JSX.Element[] {
-        const keyJSX = this.data.questions.map((question, index) => (
-            <span key={question.q}>
-                <span className="paper-option-marker pr-2">{this.start + index}.</span>
-                <span className='paper-option-content'>{ALPHABET_SET[question.correct]}</span>
-            </span>
-        ))
-        return keyJSX
+    protected generateKey(): [number, Element | Text][] {
+        return this.data.questions.map((question, index) => [
+            this.start + index,
+            new Text(ALPHABET_SET[question.correct])
+        ])
     }
 }
 
@@ -492,24 +484,21 @@ class CustomGenerator extends Generator<CustomData> {
         return {
             defaultCountSpaces: 0,
             displayName: false,
+            keyPerLine: 0,
         }
     }
 
     protected onBeforeWalk() { }
 
-    protected replacer(node: DOMNode): JSX.Element | undefined { return }
+    protected replacer(node: DOMNode): undefined { return }
 
     protected onAfterWalk(): void { }
 
-    protected addPaper(): JSX.Element[] {
-        return [<section key={this.data.paper}>
-            {parseToJSX(this.data.paper)}
-        </section>]
+    protected addPaper(): Element[] {
+        return [new Element('section', {}, parseDocument(this.data.paper).children)]
     }
 
-    protected generateKey(): JSX.Element[] {
-        return [<section key={this.data.key}>
-            {parseToJSX(this.data.key)}
-        </section>]
+    protected generateKey(): [number, Element | Text][] {
+        return [[0, new Element('p', {}, parseDocument(this.data.key).children)]]
     }
 }

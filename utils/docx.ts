@@ -7,12 +7,10 @@ type DocxTextStyle = Pick<IRunOptions, 'bold' | 'italics' | 'underline' | 'size'
 type DocxParagraphStyle = Pick<IParagraphOptions, 'alignment' | 'indent' | 'spacing' | 'contextualSpacing'>
 
 class DocxPartGenerator {
-    private html: string
-    private root: DOMNode[]
+    private root: Element
 
-    constructor(html: string) {
-        this.html = html
-        this.root = parse(this.html)
+    constructor(root: Element) {
+        this.root = root
     }
 
     private getTextRunStyle(tagName: string): DocxTextStyle {
@@ -81,7 +79,7 @@ class DocxPartGenerator {
     private createTable(node: Element): Table {
         const rows = node.children.map(row => {
             if (row.type !== 'tag') {
-                return
+                return []
             }
             if (row.name !== 'tr') {
                 return row.children.map(realRow => {
@@ -96,6 +94,9 @@ class DocxPartGenerator {
         const BORDER = { size: 1, style: 'single' } as const
         const hasBorder = node.attributes.some(attr => attr.name === 'class' && attr.value.includes("border"))
         const border = hasBorder ? BORDER : NONE_BORDER
+        if (rows.length === 0) {
+            rows.push(new TableRow({ children: [new TableCell({ children: [] })] }))
+        }
         return new Table({
             rows,
             width: { size: 100, type: 'pct' },
@@ -115,17 +116,34 @@ class DocxPartGenerator {
             case 'text':
                 return [this.createParagraph(node, {})]
             case 'tag':
-                if (node.name === 'p') {
+                if (node.attribs.class?.includes('listening-item')) {
+                    const tableNode = node.children[1]
+                    if (tableNode.type !== 'tag' || tableNode.name !== 'table') {
+                        console.error('Invalid listening item')
+                        return []
+                    }
+                    return [
+                        new Paragraph({
+                            children: [
+                                ...this.createTextRun(node.children[0], {}),
+                                this.createTable(tableNode)
+                            ]
+                        })
+                    ]
+                } else if (node.name === 'p') {
                     return [this.createParagraph(node, {
-                        indent: { firstLine: '10pt' },
+                        indent: { firstLine: '20pt' },
                         spacing: { before: 0.1, after: 0.1 },
                         contextualSpacing: true,
                     })]
-                } else if (["h1", "h2", "h3"].includes(node.name)) {
-                    return [this.createParagraph(node, { alignment: 'center' })]
-                } else if (node.name === 'table') {
+                }
+                else if (["h1", "h2", "h3"].includes(node.name)) {
+                    return [this.createParagraph(node, { alignment: node.attribs.class?.includes('section-name-title') ? 'left' : 'center' })]
+                }
+                else if (node.name === 'table') {
                     return [this.createTable(node)]
-                } else {
+                }
+                else {
                     return node.children.map(child => {
                         if (child.type === 'cdata' || child.type === 'root') {
                             return
@@ -142,7 +160,7 @@ class DocxPartGenerator {
     }
 
     public generateDocxPart() {
-        const part = this.root.map(root => this.parse(root)).flat()
+        const part = this.parse(this.root)
         // part.push(new Paragraph({
         //     text: this.html
         // }))
@@ -150,9 +168,9 @@ class DocxPartGenerator {
     }
 }
 
-export async function generateDocx(textArray: string[]): Promise<Blob> {
-    const parts = (await Promise.all(textArray.map(async text => {
-        const generator = new DocxPartGenerator(text)
+export async function generateDocx(elements: Element[]): Promise<Blob> {
+    const parts = (await Promise.all(elements.map(async element => {
+        const generator = new DocxPartGenerator(element)
         const parts = generator.generateDocxPart()
         parts.push(new Paragraph({}))
         return parts

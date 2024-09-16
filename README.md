@@ -128,7 +128,8 @@ export type CustomData = {
 ### TODO
 
 - [ ] 导出 Word UI 优化
-- [ ] 需限制挖空词**内部**不得带有格式
-- [ ] `Generator` 中的 `JSX key` 需要进行修改
-- [ ] 添加 `Generator` 中的类默认属性，定义一个方法实现
+- [ ] 去除挖空词内部格式
 - [ ] 添加听力的`4x1`、`2x2`、`1x4`排版模式
+- [ ] 全局`directions`显示开关
+- [ ] 全局`I. Listening Comprehension`、`Section A`等格式开关
+- [ ] 多题块分离渲染
