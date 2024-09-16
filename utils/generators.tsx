@@ -161,7 +161,7 @@ abstract class Generator<T extends Data> {
         cells.forEach(cell => {
             row.push(cell)
             if (row.length >= perLine) {
-                rows.push(new Element('tr', {}, row))
+                rows.push(new Element('tr', { class: 'flex flex-wrap' }, row))
                 row = []
             }
         })
@@ -214,7 +214,7 @@ class FishingGenerator extends Generator<FishingData> {
 
     protected addPaper(): Element[] {
         const options = this.options.map((option, index) => new Element(
-            'td', { key: option, className: 'px-4' }, [
+            'td', { key: option, className: 'px-4 py-2 whitespace-nowrap' }, [
             new Text(ALPHABET_SET[index] + ". " + option)
         ]))
         return [

@@ -7,7 +7,7 @@ import FishingEditor from './fishing'
 
 export default function Editor({ items, setItems, id }: { items: Data[], setItems: Dispatch<SetStateAction<Data[]>>, id?: string }) {
     const setData = (data: Data) => setItems((prevItems) => prevItems.map((item) => item.id === data.id ? data : item))
-    return <div className='border-default-500/20 w-full border before:prose-code:content-["["] after:prose-code:content-["]"] p-4 rounded'>
+    return <div className='border-default-500/20 w-full border before:prose-code:content-["["] after:prose-code:content-["]"] p-4 rounded h-full'>
         {
             items.map((data) => {
                 switch (data.type) {
